@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container" id="modify_subscription">
+        <div class="row d-flex align-items-center mb-3" id="unsubscribe_page">
+
+            {#Describe this condition statement functionality#}
+            {% if completed %}
+
+                <div class="container mt-5">
+                    <h1>Your subscription has been updated. Thank you!</h1>
+                    <p class="d-flex justify-content-center">Below is a summary of the changes you have requested:</p>
+                    <div class="row d-flex justify-content-center border-top pt-4">
+                        <div class="col-12 col-md-5 col-lg-2 mt-1 mr-1 py-3 subscribe_summary">
+                            <p class="bold mb-2">Unsubscribe to the following services:</p>
+                            <div class="container">
+
+                                {#Describe this "for" statement functionality#}
+                                {% for service in services_list %}
+                                    <p class="mb-0">- {{ service }}</p>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-5 col-lg-2 mt-1 mr-1 py-3 subscribe_summary">
+                            <p class="bold mb-2">Unsubscribe to the following sub-services:</p>
+                            <div class="container">
+
+                                {#Describe this "for" statement functionality#}
+                                {% for subservice in subservices_list %}
+                                    <p class="mb-0">- {{ subservice }}</p>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-5 col-lg-2 mt-1 mr-1 py-3 subscribe_summary">
+                            <p class="bold mb-2">Subscribe to the following services:</p>
+                            <div class="container">
+
+                                {#Describe this "for" statement functionality#}
+                                {% for service in services_list_added %}
+                                    <p class="mb-0">- {{ service }}</p>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-5 col-lg-2 mt-1 mr-1 py-3 subscribe_summary">
+                            <p class="bold mb-2">Subscribe to the following sub-services:</p>
+                            <div class="container">
+
+                                {#Describe this "for" statement functionality#}
+                                {% for subservice in subservices_list_added %}
+                                    <p class="mb-0">- {{ subservice }}</p>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </div>
+                    <a class="link d-flex justify-content-center mt-3" href="/">
+                        <p class="mb-0">Go to services status page</p>
+                    </a>
+                </div>
+
+                {#Describe this condition statement functionality#}
+            {% elif no_changes %}
+
+                <div class="container mt-5">
+                    <div class="row mt-5 d-flex justify-content-center">
+                        <h1>You have not made any changes to your subscription</h1>
+                    </div>
+                    <div class="row mt-2 d-flex justify-content-center">
+                        <h3>Would you like to update your request?</h3>
+                    </div>
+                    <div class="row mt-2 d-flex justify-content-center">
+                        <a class="link pr-2 border-right" href="/subscriber/{{ user.email }}/{{ user.token }}">
+                            <h3 class="mb-0">Yes</h3>
+                        </a>
+                        <a class="link ml-2" href="/">
+                            <h3 class="mb-0">No</h3>
+                        </a>
+                    </div>
+                </div>
+
+                {#Describe this condition statement functionality#}
+            {% else %}
+
+                <div class="container mt-5" id="header">
+                    <h1>Hi {{ user.name }}!</h1>
+                    <p class="bold  d-flex justify-content-center">Please select your subscription changes</p>
+                </div>
+
+                <!--  Subscription modification section  -->
+                <div class="container mt-3" id="form">
+                    <div class="row">
+                        <div class="col d-flex justify-content-center ml-3">
+                            <label class="bold border-bottom pb-1">Remove from your subscription:</label>
+                        </div>
+                        <div class="col d-flex justify-content-center  ml-3">
+                            <label class="bold border-bottom pb-1">Add to your subscription:</label>
+                        </div>
+                    </div>
+                    <form action="" method="post"> {% csrf_token %}
+                        <div class="row mt-2">
+                            <div class="col-6" id="to_remove">
+                                <!--  List all services user is currently registered  -->
+                                <div class="container">
+                                    <p class="bold">Services</p>
+                                    <div class="container border mt-2" id="user_services">
+
+                                        {#Describe this condition statement functionality#}
+                                        {% if no_services %}
+                                            <p>You are not registered for any service</p>
+                                            {#Describe this conditional statement functionality#}
+                                        {% else %}
+                                            {#Describe this "for" statement functionality#}
+                                            {% for service in services %}
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           name="selected_services" value="{{ service }}">
+                                                    <label class="form-check-label">{{ service.name }}</label>
+                                                </div>
+
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                                <!--  List all subservices user is currently registered  -->
+                                <div class="container mt-3">
+                                    <p class="bold">Sub-services</p>
+                                    <div class="container border mt-2" id="user_subservices">
+
+                                        {#Describe this condition statement functionality#}
+                                        {% if no_subservices %}
+                                            <p>You are not registered for any sub_service</p>
+                                            {#Describe this conditional statement functionality#}
+                                        {% else %}
+                                            {#Describe this "for" statement functionality#}
+                                            {% for sub_service in sub_services %}
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           name="selected_subservices" value="{{ sub_service }}">
+                                                    <label class="form-check-label">
+                                                        {{ sub_service.name }}</label>
+                                                </div>
+
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6" id="to_add">
+                                <!--  List all services user is not registered  -->
+                                <div class="container">
+                                    <p class="bold">Services</p>
+                                    <div class="container border mt-2" id="user_services_to_add">
+
+                                        {#Describe this condition statement functionality#}
+                                        {% if no_services_to_add %}
+                                            <p>You are currently registered to all services</p>
+                                            {#Describe this conditional statement functionality#}
+                                        {% else %}
+                                            {#Describe this "for" statement functionality#}
+                                            {% for service in services_to_add %}
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           name="selected_services_to_add" value="{{ service }}">
+                                                    <label class="form-check-label">{{ service.name }}</label>
+                                                </div>
+
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                                <!--  List all subservices user is currently registered  -->
+                                <div class="container mt-3">
+                                    <p class="bold">Sub-services</p>
+                                    <div class="container border mt-2" id="user_subservices_to_add">
+
+                                        {#Describe this condition statement functionality#}
+                                        {% if no_subservices_to_add %}
+                                            <p>You are currently registered to all sub-services</p>
+
+                                            {#Describe this conditional statement functionality#}
+                                        {% else %}
+
+                                            {#Describe this condition statement functionality#}
+                                            {% for sub_service in subservices_to_add %}
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox"
+                                                           name="selected_subservices_to_add" value="{{ sub_service }}">
+                                                    <label class="form-check-label">
+                                                        {{ sub_service.name }}</label>
+                                                </div>
+
+                                            {% endfor %}
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container d-flex justify-content-center ml-0 pl-0 mt-4">
+                                <input type="text" name="user_id" hidden value="{{ user.id }}">
+                                <button type="submit" name="update_subscription"
+                                        class="btn btn-dark py-1 px-4">Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

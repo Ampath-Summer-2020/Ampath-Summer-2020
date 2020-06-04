@@ -1,0 +1,2 @@
+pylint --load-plugins pylint_django status/
+pytest --cov-report term-missing --cov=status/

@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container mt-4 mb-2" id="ss_history_content">
+        <div class="container mt-4" id="page_heading">
+            <h1>Service Status History</h1>
+        </div>
+
+        <!--  Search section  -->
+        <div class="container my-4" id="search_and_service_name">
+            <div class="row">
+                <div class="col-3" id="search">
+                    <form action="." method="GET">
+                        <div class="row">
+                            <div class="col-10 p-0">
+                                <div class="form-group m-0">
+                                    <input type="text" name="search" placeholder="Search..." class="form-control"
+
+                                            {#Describe this conditional statement functionality#}
+                                            {% if search_value %} value="{{ search_value }}" {% endif %}>
+
+                                </div>
+                            </div>
+                            <div class="col-2 p-0 m-0">
+                                <button type="submit" name="search_tickets" class="btn pl-0"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-2">
+                    <a class="link" href="/{{ object.id }}"><p>Reset search</p></a>
+                </div>
+                <div class="col-7" id="service_name">
+                    <p><span class="bold">Business Service: </span>{{ object.name }}</p>
+                </div>
+            </div>
+        </div>
+        <!--  End of Search section  -->
+
+        <!--  Tickets history section  -->
+        <div class="container" id="status_history">
+            <div class="row pl-4 py-2 mb-3" id="incidents_heading">
+                <div class="col-2 col-lg-1">
+                    <p class="bold">Ticket ID</p>
+                </div>
+                <div class="col-2 col-lg-1">
+                    <p class="bold">Status</p>
+                </div>
+                <div class="col-2 d-none d-lg-block">
+                    <p class="bold">Started</p>
+                </div>
+                <div class="col-2 d-none d-lg-block">
+                    <p class="bold">Ended</p>
+                </div>
+                <div class="col-7 col-lg-6">
+                    <p class="bold">Description</p>
+                </div>
+            </div>
+            <div class="container m-0 p-0" id="incidents_data">
+
+                {#Describe this conditional statement functionality#}
+                {% if no_tickets %} <!--  If there are no tickets for this service  -->
+
+                    <div class="row d-flex justify-content-center mt-4">
+                        <h3 style="text-align: center;">No incidents have been reported for this service</h3>
+                    </div>
+                    <div class="row d-flex justify-content-center mt-4">
+                        <a href="/">
+                            <p class="mb-0 link">Go to services status page</p>
+                        </a>
+                    </div>
+
+                    {#Describe this conditional statement functionality#}
+                {% elif no_results %} <!--  If user searched and no results found  -->
+
+                    <div class="row mt-4 d-flex justify-content-center">
+                        <h3>No results found for your search criteria</h3>
+                    </div>
+                    <div class="row mt-4 d-flex justify-content-center">
+                        <a class="link" href="/{{ object.id }}">
+                            <p>See all incidents</p>
+                        </a>
+                    </div>
+
+                    {#Describe this conditional statement functionality#}
+                {% else %}
+                    {#Describe this "for" statement functionality#}
+                    {% for ticket in tickets_list %}
+
+{#                        <div class="row border-bottom py-2 mb-4"#}
+{#                             style="border-left: 1.5rem solid {{ ticket.status.color_hex }};">#}
+                        <div class="row border-bottom py-2"
+                             style="border-left: 1.5rem solid {{ ticket.status.color_hex }};">
+                            <div class="col-2 col-lg-1">
+                                <a href="/details/{{ ticket.id }}">
+                                    <p class="m-0 link" data-toggle="tooltip" data-placement="top"
+                                       title="Sub-service affected: {{ ticket.sub_service.name }}"
+                                       id="ticket_id">
+                                        {{ ticket.ticket_id }}
+                                    </p>
+                                </a>
+                            </div>
+                            <div class="col-2 col-lg-1">
+                                <p class="bold ml-3" data-toggle="tooltip" data-placement="top"
+                                   title="{{ ticket.status.tag }}">
+                                      <span style="color: {{ ticket.status.color_hex }}">
+                                      <i class="{{ ticket.status.class_design }}"></i>
+                                     </span>
+                                </p>
+                            </div>
+                            <div class="col-2 d-none d-lg-block">
+                                <p class="m-0">{{ ticket.begin | date:'m-d-Y h:i a' }}</p>
+                            </div>
+                            <div class="col-2 d-none d-lg-block">
+                                <p class="m-0">{{ ticket.end | date:'m-d-Y h:i a' }}</p>
+                            </div>
+                            <div class="col-7 col-lg-6">
+                                <div class="row d-lg-none mb-1">
+                                    <div class="col pl-0 pr-0 mr-2 border-right">
+                                        <p class="m-0"><span class="bold">Started:</span>
+                                            {{ ticket.begin | date:'m-d-Y h:i a' }}</p>
+                                    </div>
+                                    <div class="col pl-0">
+                                        <p class="m-0"><span class="bold">Ended:</span>
+                                            {{ ticket.end | date:'m-d-Y h:i a' }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <p class="m-0">{{ ticket.action_description | safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+        </div>
+        <!--  End of tickets history section  -->
+
+        <div class="container py-2 mb-4">
+            <div class="row mt-2">
+                <div class="col-6" id="ticket_legend"></div>
+                <div class="col-6 d-flex justify-content-end" id="subscribe_to_service">
+                    <a href="/subscription/{{ object.id }}">
+                        <button name="subscribe_to_service" class="btn btn-dark">Subscribe to this service</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!--  Subscription and legend section  -->
+
+        <!--  End of subscription and legend section  -->
+    </div>
+
+{% endblock %}

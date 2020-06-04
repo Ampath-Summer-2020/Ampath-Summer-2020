@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="container d-flex align-items-center justify-content-center mt-4 mb-2" id="subscription_page">
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-12{% if not service_specific %} col-lg-6{% endif %} m-4 pt-4" id="subscribe">
+                <div class="container mb-3 border-bottom">
+                    <h1>Subscribe to Services Updates</h1>
+                </div>
+                <div class="container mb-3">
+
+                    {# It will describe the no existence of the email domain #}
+                    {# provided on the email domain list stored on the database. #}
+                    {% if email_domain_forbidden %}
+
+                        <div class="container mt-4 pt-4" id="not_in_email_domain_list">
+                            <h3>Sorry, your email domain is not approved</h3>
+                            <div class="row mt-4">
+                                <p class="bold mb-2">See the list of approved domains below:</p>
+                                <div class="container border" id="email_domain_list">
+
+                                    {% for email_domain in email_domain_list %}
+                                        <p class="mb-0">- {{ email_domain.domain }}</p>
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="container d-flex justify-content-center">
+                                    <p>Would you like to add a different email?</p>
+                                </div>
+                                <div class="container d-flex justify-content-center">
+                                    <a class="pl-2"
+                                       href="/subscription/?service_specific={{ service_specific }}&object={{ object_passed }}&user_name={{ user_name }}&subscriber_email={{ subscriber_email }}">
+                                        <button type="submit" class="btn btn-primary mb-2" name="update_subs">Yes
+                                        </button>
+                                    </a>
+                                    <a class="pl-2" href="/">
+                                        <button type="submit" class="btn btn-primary mb-2" name="update_subs">No
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    {#Describe this conditional statement functionality#}
+                    {% elif subscribed %}
+
+                        <div class="container mt-4 pt-4" id="reg_confirmation">
+                            <h3>You have been registered to receive status updates for the selected services</h3>
+                            <h1>Thank you!</h1>
+                            <a href="/"><p class="link mb-0">Go to services status page</p></a>
+                        </div>
+
+                    {#Describe this conditional statement functionality#}
+                    {% elif user_exists %}
+
+                        <div class="container mt-4 pt-4" id="user_exists">
+                            <div class="row d-flex justify-content-center">
+                                <h3>This email address is already registered</h3>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <label>Would you like to review and modify your subscription?</label>
+                            </div>
+                            <div class="row mt-2 d-flex justify-content-center">
+                                <form action="." method="POST"> {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary mb-2" name="update_subs">Yes</button>
+                                    <input class="form-control" name="user_email" value="{{ user_exists_email }}"
+                                           hidden>
+                                    <input class="form-control" name="updated_left" value="{{ updated_left }}" hidden>
+                                </form>
+{#                                <a class="pl-2"#}
+{#                                   href="/subscription/?service_specific={{ service_specific }}&object={{ object_passed }}&user_name={{ user_name }}&subscriber_email={{ subscriber_email }}">#}
+{#                                    <button type="submit" class="btn btn-primary mb-2" name="update_subs">No</button>#}
+{#                                </a>#}
+                                <a class="pl-2" href="/">
+                                    <button type="submit" class="btn btn-primary mb-2" name="update_subs">No</button>
+                                </a>
+                            </div>
+                        </div>
+
+                    {# It covers the subscription action from a user already #}
+                    {# registered and willing to modify its subscription #}
+                    {% elif updated_left %}
+
+                        <div class="container">
+                            <div class="row d-flex justify-content-center">
+                                <h3>Your request has been submitted</h3>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <p> You will receive an email shortly</p>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <a href="/"><p class="link mb-0">Go to services status page</p></a>
+                            </div>
+                        </div>
+
+                    {# The user has not selected any service or sub-service #}
+                    {# as part of its actualization process #}
+                    {% elif no_selection %}
+
+                        <div class="container">
+                            <div class="row d-flex justify-content-center" style="text-align: center;">
+                                <h3>Please select at least one service or subservice to register</h3>
+                            </div>
+                            <div class="row d-flex justify-content-center">
+                                <a href="/subscription/?service_specific={{ service_specific }}&user_name={{ user_name }}&subscriber_email={{ subscriber_email }}">
+                                    <p class="link mb-0">Update selection</p>
+                                </a>
+                            </div>
+                        </div>
+
+                        {#Describe this conditional statement functionality#}
+                    {% else %}
+
+                        <form action="." method="POST"> {% csrf_token %}
+                            <div class="form-group form-inline"> <!-- Name info -->
+                                <label class="mr-2 bold">Enter your name</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="form-group form-inline mb-0"> <!-- Email info -->
+                                <label class="mr-2 bold">Email address</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="form-group">
+
+                                {#Describe this conditional statement functionality#}
+                                {% if service_specific %}
+
+                                    <div class="row mt-3" id="selected_service">
+                                        <label><span class="bold">Service:</span>
+                                            {% if object_passed %}
+                                                {{ object_passed }}
+                                            {% else %}
+                                                {{ object.name }}
+                                            {% endif %}
+                                        </label>
+                                        <input type="text" name="one_service" value="{{ object.id }}" hidden>
+                                    </div>
+
+                                    {#Describe this conditional statement functionality#}
+                                {% else %}
+
+                                    <div class="row">
+                                        <div class="col my-2 pl-0">
+                                            <p class="mb-0 bold">Business Services</p>
+                                        </div>
+                                    </div>
+                                    <div class="row border" id="list_of_services">
+                                        <div class="ml-2">
+                                            {{ form.services }}
+                                        </div>
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col mb-1 pl-0">
+                                        <p class="mb-0 bold">Sub-Services</p>
+                                    </div>
+                                </div>
+                                <div class="row border"
+                                     id="{% if service_specific %}specific_service{% else %}list_of_sub_services{% endif %}">
+                                    <div class="ml-2">
+                                        {{ form.subservices }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row d-flex justify-content-end" id="subscribe_submit">
+                                <button type="submit" name="subs_updates" class="btn btn-primary mb-2">Subscribe to
+                                    updates
+                                </button>
+                                <input class="form-control" name="service_specific" value="{{ service_specific }}"
+                                       hidden>
+                                <input class="form-control" name="object" value="{{ object }}" hidden>
+                            </div>
+                        </form>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+            {#Describe this conditional statement functionality#}
+            {% if not service_specific %}
+
+                <div class="col d-flex align-items-center justify-content-center" id="update">
+                    <div class="container">
+                        <div class="container mb-3 border-bottom">
+                            <h1>Update Subscription</h1>
+                        </div>
+
+                        {#Describe this conditional statement functionality#}
+                        {% if updated_right %}
+
+                            <div class="container">
+                                <h3>Your request has been submitted</h3>
+                                <p> You will receive an email shortly</p>
+                                <a href="/">
+                                    <p class="link mb-0">Go to services status page</p>
+                                </a>
+                            </div>
+
+                            {#Describe this conditional statement functionality#}
+                        {% else %}
+
+                            <div class="container">
+
+                                {#Describe this conditional statement functionality#}
+                                {% if not_registered %}
+
+                                    <div class="container" id="not_registered">
+                                        <h3 class="alert">This email is not registered</h3>
+                                        <p> If you would like to receive service updates notifications please register
+                                            on the left section.
+                                            Otherwise click the link below to update your input.</p>
+                                        <a href="/subscription/?email={{ email_entered }}">
+                                            <p class="link mb-0">Update email</p>
+                                        </a>
+                                    </div>
+
+                                    {#Describe this conditional statement functionality#}
+                                {% else %}
+
+                                    <form action="." method="POST"> {% csrf_token %}
+                                        <div class="form-group"> <!--Email info-->
+                                            <label>Please enter your email address to add or delete services
+                                                notifications</label>
+                                            {% if empty_email %}
+                                                <small class="form-text my-0 alert bold">Please enter your email</small>
+                                            {% endif %}
+                                            <input type="email" class="form-control" aria-describedby="emailHelp"
+                                                   name="user_email"
+                                                    {% if update_email %} value="{{ update_email }}" {% endif %}
+                                                   id="user_email">
+                                            <small class="form-text text-muted">You will receive an email
+                                                shortly</small>
+                                        </div>
+                                        <div class="row d-flex justify-content-end" id="unsubscribe_submit">
+                                            <button type="submit" class="btn btn-primary mb-2" name="update_subs">Submit
+                                                request
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
+

@@ -1,0 +1,309 @@
+
+html, body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar {
+    font-family: 'Fira Sans', sans-serif;
+}
+
+#logo {
+    width: auto;
+    height: 2.5rem;
+}
+
+.link {
+    color: #0373fc;
+    text-decoration: underline;
+}
+
+.alert {
+    color: #F00004;
+}
+
+.subscribe_summary {
+    background-color: #E9ECEF;
+}
+
+.navbar-nav .active {
+    background-color: #E9ECEF;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+#footer {
+    background-color: #1B2B60;
+    width: 100%;
+    text-align: center;
+    color: white;
+    bottom: 0;
+    position: relative;
+}
+
+h1 {
+    text-align: center;
+    font-family: 'Fira Sans', sans-serif;
+    font-weight: Bold;
+    font-size: 1.5rem;
+}
+
+#list_events {
+    background-color: #E9ECEF;
+}
+
+#list_events p {
+    margin-bottom: 0.3rem;
+}
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+#search .form-control {
+    border: none;
+}
+
+#search .row {
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}
+
+#modify_subscription {
+    height: 38rem;
+}
+
+#list_of_services_data {
+    overflow: auto;
+    height: 33rem;
+}
+
+#specific_service {
+    overflow: auto;
+    height: 17rem;
+}
+
+.subscribe_summary {
+    overflow: auto;
+    max-height: 20rem;
+
+}
+
+#list_of_services, #list_of_sub_services, #user_subservices, #user_services, #user_services_to_add,
+#user_subservices_to_add, #email_domain_list {
+    overflow: auto;
+    height: 8rem;
+}
+
+#incidents_data {
+    overflow: auto;
+    height: 23rem;
+}
+
+.legend_heading {
+    background-color: #E9ECEF;
+}
+
+#dropdown_menu_button {
+    width: 7rem !important;
+}
+
+#ticket_info {
+    background-color: #E9ECEF;
+    overflow: auto;
+    height: 14rem;
+}
+
+#ticket_details p {
+    margin: 0;
+}
+
+#ticket_events_heading p {
+    text-align: center;
+}
+
+#ticket_events_content {
+    overflow: auto;
+    height: 17rem;
+}
+
+#arrows {
+    text-align: right;
+}
+
+#arrows p {
+    display: inline;
+}
+
+.inactive {
+    color: #96989e;
+}
+
+#service_name p {
+    text-align: right;
+}
+
+#incidents_heading {
+    background-color: #E9ECEF;
+}
+
+#incidents_heading p {
+    margin: 0;
+}
+
+.btn-dark {
+    background-color: #3b4045;
+}
+
+#regions .btn-secondary {
+    color: #212529;
+    background-color: white;
+    border-color: #212529;
+    border-radius: 0;
+}
+
+#subscribe, #update {
+    height: 36rem;
+}
+
+#subscribe {
+    background-color: #E9ECEF;
+}
+
+#subscription_page .btn-primary {
+    background-color: #4A4A4A;
+    border-color: #4A4A4A;
+}
+
+#update {
+    text-align: center;
+}
+
+#reg_confirmation {
+    text-align: center;
+}
+
+.red {
+    color: red;
+}
+
+/* Default size for xs screen sizes */
+.navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
+#user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+    font-size: 0.5rem;
+}
+
+h3 {
+    font-size: 1rem;
+}
+
+#modify_subscription {
+    height: 90vh;
+}
+
+#service_subservice_info, #ss_history_content {
+    height: 88vh;
+}
+
+/* Adjusting elements according to screen size. Responsive */
+
+@media (min-width: 576px) {
+    /*Small*/
+    .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+        font-size: 0.6rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    #subscribe, #update {
+        height: 35rem;
+    }
+}
+
+@media (min-width: 768px) {
+    /*Medium*/
+    .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+        font-size: 0.7rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h3 {
+        font-size: 1.5rem;
+    }
+
+    #subscribe, #update {
+        height: 35rem;
+    }
+}
+
+@media (min-width: 992px) {
+    /*Large*/
+    .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+        font-size: 0.7rem;
+    }
+
+    h3 {
+        font-size: 1.6rem;
+    }
+
+    #subscribe, #update {
+        height: 36rem;
+    }
+
+    #subscription_page {
+        height: 90vh;
+    }
+}
+
+@media (min-width: 1200px) {
+    /*Extra Large*/
+
+    .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+        font-size: 0.8rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    #subscribe, #update {
+        height: 36rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    /*Extra Large*/
+
+    #incidents_data {
+        overflow: auto;
+        height: 30rem;
+    }
+
+    #ticket_events_content {
+        overflow: auto;
+        height: 30rem;
+    }
+
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+        height: 10rem;
+    }
+}

@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+
+  mydb:
+    image: mysql:5.5
+    restart: always
+    volumes:
+      - /home/services-status-app/mysql:/var/lib/mysql
+    ports:
+      - 5555:3306
+    environment:
+      MYSQL_HOST: "0.0.0.0"
+      MYSQL_DATABASE: "changemedb"
+      MYSQL_USER: "changemeuser"
+      MYSQL_PASSWORD: "changemepass"
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+
+  services-status:
+    image: services-status
+    build: .
+    restart: always
+    volumes:
+      - /home/services-status-app/uploads:/var/www/uploads
+      - /home/services-status-app/media:/var/www/media
+    links:
+      - "mydb"
+    depends_on:
+      - "mydb"
+    environment:
+      SSA_DBHOST: "mydb"
+      SSA_DBNAME: "changemedb"
+      SSA_DBUSER: "changemeuser"
+      SSA_DBPASS: "changemepass"
+      SSA_SMTPHOST: "yoursmtpserver.domain.tld"
+      SSA_SMTPUSER: "yoursmtpuser@domain.tld"
+      SSA_SMTPPASS: "changeme"
+    ports:
+      - 8000:80
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "udp://yoursyslogserver.intranet.domain.tld:514"
