@@ -119,7 +119,7 @@ class ServicesStatusView(View):
 
         # Declaring an empty dictionary to store status per day for each service
         service_status = dict()
-        no_issues = Status.objects.filter(tag='No Issues')[0]
+        no_issues = Status.objects.filter(tag='No Issues').first()
 
         # Getting list of tickets associated with each service
         for service in services:
