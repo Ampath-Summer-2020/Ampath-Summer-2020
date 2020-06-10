@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter
+from django_admin_listfilter_dropdown.filters import ChoiceDropdownFilter ,DropdownFilter, RelatedDropdownFilter
+from django import forms
 
-from status.forms import TicketHistoryInlineFormset, TicketForm, SubscriberForm
+from status.forms import TicketHistoryInlineFormset, TicketForm, SubscriberForm, ClientDomainForm
 from .models import ClientDomain
 from .models import EmailDomain
 from .models import Priority
@@ -13,6 +14,7 @@ from .models import Subscriber
 from .models import Ticket
 from .models import TicketLog
 from .models import Topology
+from django.contrib import messages
 
 
 @admin.register(Region)
@@ -29,11 +31,15 @@ class RegionAdmin(admin.ModelAdmin):
                     DropdownFilter))
     ordering = ['name']
 
-
-@admin.register(ClientDomain)
 class ClientDomainAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description',)
-    search_fields = ['name', 'domain_description']
+    form = ClientDomainForm
+    list_display = ('name', 'description', 'get_services', 'inter_domain_services',)
+
+
+    # readonly_fields = ('inter_domain_service',)
+    def inter_domain_services(self, obj):
+        return obj.inter_domain_service
+    
     list_filter = (('services__topology__subservices__ticket__status__tag',
                     DropdownFilter),
                    ('region__name',
@@ -41,13 +47,16 @@ class ClientDomainAdmin(admin.ModelAdmin):
                    ('services__name',
                     DropdownFilter),
                    ('services__topology__subservices__name',
+                    DropdownFilter),
+                    ('services__scope',
                     DropdownFilter))
-    ordering = ['name']
+    # ordering = ['name']
 
+admin.site.register(ClientDomain, ClientDomainAdmin)
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description',)
+    list_display = ('name', 'description', 'scope_type',)
     search_fields = ['name', 'service_description', 'topology__subservices__name',
                      'clientdomain__region__name']
     list_filter = (('topology__subservices__ticket__status__tag',
@@ -57,7 +66,9 @@ class ServiceAdmin(admin.ModelAdmin):
                    ('clientdomain__name',
                     DropdownFilter),
                    ('topology__subservices__name',
-                    DropdownFilter))
+                    DropdownFilter),
+                    ('scope', 
+                    ChoiceDropdownFilter))
     ordering = ['name']
 
 
