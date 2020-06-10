@@ -2,6 +2,8 @@ import secrets
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import ManyToManyRel
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from validate_email import validate_email
 
 from status.mail_sender import MailSender
@@ -12,7 +14,82 @@ from .models import SubService
 from .models import Subscriber
 from .models import Ticket
 from .models import Topology
+from .models import ClientDomain
+from django.forms import Select
 
+class MySelect(Select):
+
+    def __init__(self, attrs=None, choices=(), disabled_choices=()):
+        super(MySelect, self).__init__(attrs=attrs, choices=choices)
+        self.disabed_choices = disabled_choices
+
+    def create_option(self, *args,**kwargs):
+        option = super().create_option(*args,**kwargs)
+
+        for (_, service_name) in self.disabed_choices:
+            if str(option.get('value')) == str(service_name):               
+                option['attrs']['disabled'] = 'disabled'
+
+        return option
+    
+class ClientDomainForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        DOMAIN_CHOICES = [
+            ('None', 'None')
+        ]
+
+        DISABLED_DOMAIN_CHOICES = [
+            
+        ]
+
+        # returns QuerySet
+        inter_domain_services = Service.objects.filter(scope=Service.INTER_DOMAIN)
+        multi_domain_services = Service.objects.filter(scope=Service.MULTI_DOMAIN).all()
+       
+        for service in inter_domain_services:            
+
+            # if service is in use and not being used by current clientdomain
+            if ClientDomain.objects.filter(inter_domain_service=service).exists() and \
+                not ClientDomain.objects.filter(name=kwargs['instance'], inter_domain_service=service):
+                
+                DISABLED_DOMAIN_CHOICES.append((service, service.name)) 
+                DOMAIN_CHOICES.append((service, service.name + "----IN USE"))
+
+            # service is being used by current instance client domain, move it to top of
+            # service list
+            elif ClientDomain.objects.filter(name=kwargs['instance'], inter_domain_service=service):
+                DOMAIN_CHOICES.insert(0, (service, service.name))
+            
+            # service is not being used, free to use
+            else:
+                DOMAIN_CHOICES.append((service, service.name))       
+           
+        
+        super(ClientDomainForm, self).__init__(*args, **kwargs)        
+        self.fields['inter_domain_service'] = forms.ChoiceField(choices=DOMAIN_CHOICES,required=False, 
+                    widget=MySelect(choices=DOMAIN_CHOICES, 
+                        disabled_choices=DISABLED_DOMAIN_CHOICES))
+        self.fields['multi_domain_services'] = forms.ModelMultipleChoiceField(queryset=multi_domain_services)
+           
+
+    def clean(self):
+        inter_domain_service = self.cleaned_data['inter_domain_service']
+        client_domain_name = self.cleaned_data['name']
+        
+        print(inter_domain_service)
+        if inter_domain_service != "None":
+            filtered_inter_domain_service = Service.objects.get(name=inter_domain_service)
+            self.cleaned_data['inter_domain_service'] = filtered_inter_domain_service
+
+            # filtered_inter_domain_service = Service.objects.get(name=inter_domain_service)           
+            # if ClientDomain.objects.filter(inter_domain_service=filtered_inter_domain_service).exclude(name=client_domain_name).exists():
+            #     self.cleaned_data['inter_domain_service'] = None
+            #     raise forms.ValidationError('Already assigned')
+            # else:
+            #     self.cleaned_data['inter_domain_service'] = filtered_inter_domain_service
+        else:
+            self.cleaned_data['inter_domain_service'] = None
 
 class EmailActions:
 
