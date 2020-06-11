@@ -15,7 +15,9 @@ from .models import Subscriber
 from .models import Ticket
 from .models import Topology
 from .models import ClientDomain
-from django.forms import Select
+from django.forms import Select # for custom widget
+
+from itertools import chain
 
 class MySelect(Select):
 
@@ -45,7 +47,7 @@ class ClientDomainForm(forms.ModelForm):
 
         # returns QuerySet
         inter_domain_services = Service.objects.filter(scope=Service.INTER_DOMAIN)
-        multi_domain_services = Service.objects.filter(scope=Service.MULTI_DOMAIN).all()
+        multi_domain_services = Service.objects.filter(scope=Service.MULTI_DOMAIN)
        
         for service in inter_domain_services:            
 
@@ -71,25 +73,29 @@ class ClientDomainForm(forms.ModelForm):
                     widget=MySelect(choices=DOMAIN_CHOICES, 
                         disabled_choices=DISABLED_DOMAIN_CHOICES))
         self.fields['multi_domain_services'] = forms.ModelMultipleChoiceField(queryset=multi_domain_services)
+        
            
 
     def clean(self):
         inter_domain_service = self.cleaned_data['inter_domain_service']
         client_domain_name = self.cleaned_data['name']
         
-        print(inter_domain_service)
         if inter_domain_service != "None":
             filtered_inter_domain_service = Service.objects.get(name=inter_domain_service)
             self.cleaned_data['inter_domain_service'] = filtered_inter_domain_service
-
-            # filtered_inter_domain_service = Service.objects.get(name=inter_domain_service)           
-            # if ClientDomain.objects.filter(inter_domain_service=filtered_inter_domain_service).exclude(name=client_domain_name).exists():
-            #     self.cleaned_data['inter_domain_service'] = None
-            #     raise forms.ValidationError('Already assigned')
-            # else:
-            #     self.cleaned_data['inter_domain_service'] = filtered_inter_domain_service
         else:
             self.cleaned_data['inter_domain_service'] = None
+
+        multi_domain_services = []
+        for service in self.cleaned_data['multi_domain_services']:
+            filtered_service = Service.objects.get(name=service)
+            multi_domain_services.append(filtered_service)
+
+        self.cleaned_data['multi_domain_services'] = multi_domain_services
+    
+        
+
+
 
 class EmailActions:
 

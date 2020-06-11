@@ -34,7 +34,7 @@ class RegionAdmin(admin.ModelAdmin):
 class ClientDomainAdmin(admin.ModelAdmin):
     form = ClientDomainForm
     list_display = ('name', 'description', 'get_services', 'inter_domain_services',)
-
+    exclude = ('services',)
 
     # readonly_fields = ('inter_domain_service',)
     def inter_domain_services(self, obj):
