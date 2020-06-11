@@ -32,3 +32,5 @@ htmlcov/*
 coverage.xml
 *.cover
 .coveragerc
+.vscode/settings.json
+progres.txt

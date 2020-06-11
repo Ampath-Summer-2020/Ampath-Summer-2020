@@ -18,9 +18,18 @@ class Service(models.Model):
         - The Service name will be mandatory, but no the description field.
         - The name field could have a maximum of 100 characters.
         - The description field will store an HTML enriched text content.
+        - The scope field will identify if service is inter-domain or multi-domain
     """
+
+    MULTI_DOMAIN = "multi_domain"
+    INTER_DOMAIN = "inter_domain"
+    DOMAIN_CHOICES = [
+        (MULTI_DOMAIN, "Multi-Domain"),
+        (INTER_DOMAIN, "Inter-Domain")  
+    ]
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
     service_description = RichTextField(blank=True, null=True, verbose_name='Description')
+    scope = models.CharField(max_length=30, choices=DOMAIN_CHOICES, default=MULTI_DOMAIN, blank=True)
 
     def description(self):
         """
@@ -45,7 +54,9 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
-
+    def scope_type(self):
+        return str(self.scope).upper()
+    
 class ClientDomain(models.Model):
     """
     Class to specify the Client Domain model.
@@ -56,11 +67,17 @@ class ClientDomain(models.Model):
         - The description field will store an HTML enriched text content.
         - The relationship with Services will help to set a
         client domain to many services and vice versa.
+        - The inter_domain_service field will have the service
+        with a inter-domain scope. One inter-domain service can 
+        can be attached to one client domain.
+        - The multi_domain_services field will create relationships with Services.
     """
     name = models.CharField(unique=True, max_length=100, verbose_name='Client Domain')
     domain_description = RichTextField(blank=True, null=True, verbose_name='Description')
     services = models.ManyToManyField(Service)
-
+    inter_domain_service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True, related_name='inter_domain_service')
+    multi_domain_services = models.ManyToManyField(Service, blank=True, related_name='multi_domain_services')
+    
     def description(self):
         """
         Method to render HTML content.
@@ -83,6 +100,15 @@ class ClientDomain(models.Model):
     def __str__(self):
         return self.name
 
+    def get_services(self):
+        return "\n".join([s.name for s in self.services.all()])
+
+    def get_inter_domain_service(self):
+        inter_domain_services = []
+        for service in self.services.all():
+            if service.scope == 'inter_domain':
+                inter_domain_services.append(service.name)
+        return "\n".join(inter_domain_services)
 
 class Region(models.Model):
     """
@@ -121,7 +147,6 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
-
 class SubService(models.Model):
     """
     Class to specify the Subservices Model/Table
@@ -155,7 +180,6 @@ class SubService(models.Model):
     def __str__(self):
         return self.name
 
-
 class Priority(models.Model):
     """
     Class to specify the Priority Model/Table
@@ -174,7 +198,6 @@ class Priority(models.Model):
 
     def __str__(self):
         return self.tag
-
 
 class Topology(models.Model):
     """
@@ -206,7 +229,6 @@ class Topology(models.Model):
         return "Topology {0}: about Service {1}, {2} " \
                "priority".format(self.pk, self.service, self.priority)
 
-
 class Status(models.Model):
     """
     Class to specify the Status Model/Table
@@ -225,7 +247,6 @@ class Status(models.Model):
 
     def __str__(self):
         return self.tag
-
 
 class Ticket(models.Model):
     """
@@ -274,7 +295,6 @@ class Ticket(models.Model):
         # return "{0} in {1}".format(self.service_category, self.business_service)
         return self.ticket_id
 
-
 class TicketLog(models.Model):
     """
     Class to specify the TicketLog Model/Table
@@ -292,7 +312,6 @@ class TicketLog(models.Model):
 
     def __str__(self):
         return "{0} in {1}".format(self.ticket.sub_service, self.ticket.ticket_id)
-
 
 class Subscriber(models.Model):
     """
@@ -315,7 +334,6 @@ class Subscriber(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class EmailDomain(models.Model):
     """
