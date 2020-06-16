@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django_admin_listfilter_dropdown.filters import ChoiceDropdownFilter ,DropdownFilter, RelatedDropdownFilter
 from django import forms
+from django.core.exceptions import ValidationError
 
 from status.forms import TicketHistoryInlineFormset, TicketForm, SubscriberForm, ClientDomainForm
 from .models import ClientDomain
@@ -31,14 +32,20 @@ class RegionAdmin(admin.ModelAdmin):
                     DropdownFilter))
     ordering = ['name']
 
+
+@admin.register(ClientDomain)
 class ClientDomainAdmin(admin.ModelAdmin):
     form = ClientDomainForm
-    list_display = ('name', 'description', 'get_services', 'inter_domain_services',)
-    exclude = ('services',)
+    list_display = ('name', 'description', 'get_services', 'get_inter_domain_service',)
 
-    # readonly_fields = ('inter_domain_service',)
+    
+    
     def inter_domain_services(self, obj):
         return obj.inter_domain_service
+
+    def tickets(self, obj):
+        return Ticket.objects.get(client_domain=obj).ticket_id
+
     
     list_filter = (('services__topology__subservices__ticket__status__tag',
                     DropdownFilter),
@@ -51,8 +58,6 @@ class ClientDomainAdmin(admin.ModelAdmin):
                     ('services__scope',
                     DropdownFilter))
     # ordering = ['name']
-
-admin.site.register(ClientDomain, ClientDomainAdmin)
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
@@ -69,6 +74,7 @@ class ServiceAdmin(admin.ModelAdmin):
                     DropdownFilter),
                     ('scope', 
                     ChoiceDropdownFilter))
+                    
     ordering = ['name']
 
 
@@ -120,7 +126,7 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = ('ticket_id', 'sub_service', 'status', 'begin', 'end', 'notify_action',)
 
     fieldsets = [
-        ('Sub-Service on process', {'fields': ['ticket_id', 'sub_service', 'status']}),
+        ('Sub-Service on process', {'fields': ['ticket_id', 'client_domain', 'service','sub_service', 'status']}),
         ('Date information', {'fields': ['begin', 'end']}),
         ('Additional Information', {'fields': ['action_description', 'action_notes']}),
         (None, {'fields': ['notify_action']}),
