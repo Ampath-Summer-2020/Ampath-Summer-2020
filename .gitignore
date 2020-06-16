@@ -3,6 +3,9 @@ venv
 venv/
 venv/*
 
+env/
+.vscode/
+
 ServiceStatus/static
 ServiceStatus/static/
 ServiceStatus/static/*
@@ -31,3 +34,4 @@ htmlcov/*
 coverage.xml
 *.cover
 .coveragerc
+
