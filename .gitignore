@@ -4,6 +4,9 @@ venv/
 venv/*
 env/
 
+env/
+.vscode/
+
 ServiceStatus/static
 ServiceStatus/static/
 ServiceStatus/static/*
@@ -32,5 +35,8 @@ htmlcov/*
 coverage.xml
 *.cover
 .coveragerc
+<<<<<<< HEAD
 .vscode/settings.json
+=======
+>>>>>>> master
 
