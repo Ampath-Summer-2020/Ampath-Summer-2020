@@ -75,8 +75,10 @@ class ClientDomain(models.Model):
     name = models.CharField(unique=True, max_length=100, verbose_name='Client Domain')
     domain_description = RichTextField(blank=True, null=True, verbose_name='Description')
     services = models.ManyToManyField(Service)
-    inter_domain_service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True, related_name='inter_domain_service')
-    multi_domain_services = models.ManyToManyField(Service, blank=True, related_name='multi_domain_services')
+
+    # services = models.ManyToManyField(Service, related_name='services')
+    # inter_domain_service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True, related_name='inter_domain_service')
+    # multi_domain_services = models.ManyToManyField(Service, blank=True, related_name='multi_domain_services')
     
     def description(self):
         """
@@ -259,6 +261,10 @@ class Ticket(models.Model):
         - The actions (notes and description) fields will store an HTML enriched text content.
         - The relationship with SubServices will help to relate a
         ticket to a subservice.
+        - The relationship with Services will help to relate a ticket
+        to a service
+        - The relationship with ClientDomains will help to relate a ticket
+        to a clientdomain
         - The notification action field will control the notification process
     """
 
@@ -274,9 +280,13 @@ class Ticket(models.Model):
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.
     sub_service = models.ForeignKey(SubService, models.SET_NULL,
-                                    null=True, verbose_name='Sub-Service')
+                                    blank=True, null=True, verbose_name='Sub-Service')
+    # service = models.ForeignKey(Service, models.SET_NULL, 
+                                    # blank=True, null=True, verbose_name='Service')
+    # client_domain = models.ForeignKey(ClientDomain, models.SET_NULL, 
+                                    # blank=True, null=True, verbose_name='Client Service')
     status = models.ForeignKey(Status, models.DO_NOTHING,
-                               null=True, default=3, verbose_name='Status')
+                                    null=True, default=3, verbose_name='Status') 
     begin = models.DateTimeField()
     end = models.DateTimeField(null=True, blank=True)
     action_description = RichTextField()
