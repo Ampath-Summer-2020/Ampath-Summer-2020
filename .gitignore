@@ -35,8 +35,6 @@ htmlcov/*
 coverage.xml
 *.cover
 .coveragerc
-<<<<<<< HEAD
-.vscode/settings.json
-=======
->>>>>>> master
 
+docker-compose.yml
+Dockerfile
