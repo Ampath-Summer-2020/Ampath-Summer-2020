@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="mainBody">
 <head>
     <meta charset="UTF-8">
     <title>Services Status</title>
@@ -25,37 +25,61 @@
 
 <body>
 <!-- NavBar -->
-<nav class="navbar navbar-expand navbar-light bg-light py-0 d-flex justify-content-between">
-    <a class="navbar-brand" href="{% url 'services_status_view' %}">
-        <img src="{% static 'img/logo.png' %}" id="logo" alt="logo">
+<nav class="navbar navbar-expand-lg navbar-light bg-light py-0 navbar-right justify-content-between sticky-top">
+
+    <a class="navbar-brand m" href="{% url 'services_status_view' %}" id="navBarLogo">
+        <img src="{% static 'img/logo.png' %}" id="logo" alt="logo" >
     </a>
-    <div class="d-flex justify-content-end" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link nav-ref border-left px-3 {% if service_active %} active {% endif %}"
-               href="{% url 'services_status_view' %}">Services Status </a>
-            <a class="nav-item nav-link nav-ref border-left px-3 {% if subscription_active %} active {% endif %}"
-               href="{% url 'subscription_view' %}">Manage subscriptions</a>
-            <a class="nav-item nav-link border-left px-3 py-0" href="#">
 
-                <!--Contact Dropdown-->
-                <button class="btn dropdown-toggle p-0 pt-2" type="button" id="dropdownMenu2"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Contact us
-                </button>
+<!--    <div class="d-flex justify-content-end" id="navbarNavAltMarkup">-->
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#collapse_target">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                <!--Contact info-->
-                <div class="dropdown-menu dropdown-menu-right">
-                    <div class="dropdown-item">
-                        <p><span class="bold">Phone:</span> +1-317-274-7781 ( 24x7x365 )</p>
-                        <p><span class="bold">Email:</span> noc at ampath.net</p>
-                        <p><span class="bold">Website:</span> http://noc.ampath.net/</p>
+        <div class="collapse navbar-collapse justify-content-between mt-2" id="collapse_target">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link{% if service_active %} active {% endif %}"
+                    href="{% url 'services_status_view' %}">Services Status </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if subscription_active %} active {% endif %}"
+                    href="{% url 'subscription_view' %}">Manage subscriptions</a>
+                </li>
+                <li class="nav-item">
+                    <!--Contact Dropdown-->
+                    <button class="nav-link btn dropdown-toggle" type="button" id="dropdownMenu2"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Contact us
+                    </button>
+
+                    <!--Contact info-->
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-item">
+                            <p><span class="bold">Phone:</span> +1-317-274-7781 ( 24x7x365 )</p>
+                            <p><span class="bold">Email:</span> noc at ampath.net</p>
+                            <p><span class="bold">Website:</span> http://noc.ampath.net/</p>
+                        </div>
                     </div>
-                </div>
-                <!--End of Contact Dropdown-->
 
-            </a>
+                    <!--End of Contact Dropdown-->
+
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link">
+                            <a class="" href="#">Dark Mode</a>
+                            <label class="switch">
+                            <input type="checkbox" id="dmslider" onclick="toggleDarkMode()">
+                          <span class="slider round"></span>
+                            </label>
+                    </span>
+                </li>
+                <li class="nav-item d-flex">
+                    <a class="nav-link" href="https://status.amlight.net/admin/login/">Admin Login</a>
+                </li>
+            </ul>
         </div>
-    </div>
+<!--    </div>-->
 </nav>
 <!-- End of NavBar -->
 

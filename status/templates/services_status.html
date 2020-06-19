@@ -17,7 +17,7 @@
         {#Describe this "for" statement functionality#}
         {% for ticket in ticket_list %}
 
-            <div class="container mt-4 py-3" id="list_events"
+            <div class="container mt-4 py-3 ticket-instance list_events"
                  style="border-left: 0.6rem solid {{ ticket.status.color_hex }};">
                 <a href="details/{{ ticket.id }}">
                     <p><span class="bold">Sub-service Impacted: </span>{{ ticket.sub_service.name }}</p>
