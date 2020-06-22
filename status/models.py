@@ -67,18 +67,11 @@ class ClientDomain(models.Model):
         - The description field will store an HTML enriched text content.
         - The relationship with Services will help to set a
         client domain to many services and vice versa.
-        - The inter_domain_service field will have the service
-        with a inter-domain scope. One inter-domain service can 
-        can be attached to one client domain.
-        - The multi_domain_services field will create relationships with Services.
     """
     name = models.CharField(unique=True, max_length=100, verbose_name='Client Domain')
     domain_description = RichTextField(blank=True, null=True, verbose_name='Description')
     services = models.ManyToManyField(Service)
 
-    # services = models.ManyToManyField(Service, related_name='services')
-    # inter_domain_service = models.ForeignKey(Service, on_delete=models.CASCADE, null=True, blank=True, related_name='inter_domain_service')
-    # multi_domain_services = models.ManyToManyField(Service, blank=True, related_name='multi_domain_services')
     
     def description(self):
         """
@@ -281,10 +274,10 @@ class Ticket(models.Model):
     # the deletion of the sub-service where they belong.
     sub_service = models.ForeignKey(SubService, models.SET_NULL,
                                     blank=True, null=True, verbose_name='Sub-Service')
-    # service = models.ForeignKey(Service, models.SET_NULL, 
-                                    # blank=True, null=True, verbose_name='Service')
-    # client_domain = models.ForeignKey(ClientDomain, models.SET_NULL, 
-                                    # blank=True, null=True, verbose_name='Client Service')
+    service = models.ForeignKey(Service, models.SET_NULL,
+                                    blank=True, null=True, verbose_name='Service')
+    client_domain = models.ForeignKey(ClientDomain, models.SET_NULL, 
+                                    blank=True, null=True, verbose_name='Client Service')
     status = models.ForeignKey(Status, models.DO_NOTHING,
                                     null=True, default=3, verbose_name='Status') 
     begin = models.DateTimeField()
@@ -321,6 +314,9 @@ class TicketLog(models.Model):
     action_notes = RichTextField(blank=True, null=True, verbose_name='Notes')
 
     def __str__(self):
+        # if service is None
+        # is sub-service is None
+        # etc ...
         return "{0} in {1}".format(self.ticket.sub_service, self.ticket.ticket_id)
 
 class Subscriber(models.Model):
