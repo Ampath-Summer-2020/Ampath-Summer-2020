@@ -168,7 +168,7 @@
                             </a>
                         </div>
 
-                        {#Describe this conditional statement functionality#}
+                    {#Describe this conditional statement functionality#}
                     {% else %}
 
                         {#Describe this "for" statement functionality#}
@@ -182,16 +182,23 @@
                                 </div>
 
                                 {#Describe this "for" statement functionality#}
-                                {% for status_day in status|get_value:service %}
-
+                                {% for status_days in status|get_value:service %}
                                     <div class="col">
-                                        <p class="m-0 mt-1" style="color: {{ status_day.color_hex }}">
-                                            <i class="{{ status_day.class_design }}"></i>
+                                        <p class="m-0 mt-1">
+                                            {% for status_day in status_days %}
+                                                {% for id, status in status_day.items %}
+                                                    {% if id == 'None' %}
+                                                        <i class="{{ status.class_design }}" style="color: {{ status.color_hex }}"></i>
+                                                    {% else %}
+                                                        <a href="/details/{{ id }}">
+                                                            <i class="{{ status.class_design }}" style="color: {{ status.color_hex }}"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
                                         </p>
                                     </div>
-
                                 {% endfor %}
-
                             </div>
 
                         {% endfor %}

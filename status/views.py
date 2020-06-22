@@ -3,6 +3,7 @@ from datetime import timedelta
 from distutils.util import strtobool
 from itertools import chain
 
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views import View
@@ -49,10 +50,69 @@ class ServicesStatusView(View):
         self.remove_sessions(request)
 
         # Getting most recent 5 tickets
-        queryset = Ticket.objects.all().order_by('begin').reverse()[:5]
+        # queryset = Ticket.objects.all().order_by('begin').reverse()[:5]
+        queryset = Ticket.objects.all().order_by('pk').reverse()[:5]
+
+        # Initializing queryset to empty
+        recent_tickets = Ticket.objects.none()
+
+        new_queryset = None
+
+        if queryset:
+            recent_tickets_list = recent_tickets | queryset
+
+            recent_high_high_priority_tickets = list()
+            recent_high_low_priority_tickets = list()
+            recent_medium_high_priority_tickets = list()
+            recent_medium_low_priority_tickets = list()
+            recent_low_priority_ticket = list()
+
+            for ticket in recent_tickets_list:
+
+                status = ticket.status.tag
+                if status == "Outage":
+                    recent_high_high_priority_tickets.append(ticket)
+                elif status == "Alert":
+                    recent_high_low_priority_tickets.append(ticket)
+                elif status == "In Process":
+                    recent_medium_high_priority_tickets.append(ticket)
+                elif status == "Planned":
+                    recent_medium_low_priority_tickets.append(ticket)
+                else:
+                    recent_low_priority_ticket.append(ticket)
+
+            queryset_high_high = Ticket.objects.none()
+            if len(recent_high_high_priority_tickets):
+                custom_list = [ticket.id for ticket in recent_high_high_priority_tickets]
+                queryset_high_high = Ticket.objects.filter(pk__in=custom_list)
+
+            queryset_high_low = Ticket.objects.none()
+            if len(recent_high_low_priority_tickets):
+                custom_list = [ticket.id for ticket in recent_high_low_priority_tickets]
+                queryset_high_low = Ticket.objects.filter(pk__in=custom_list)
+
+            queryset_medium_high = Ticket.objects.none()
+            if len(recent_medium_high_priority_tickets):
+                custom_list = [ticket.id for ticket in recent_medium_high_priority_tickets]
+                queryset_medium_high = Ticket.objects.filter(pk__in=custom_list)
+
+            queryset_medium_low = Ticket.objects.none()
+            if len(recent_medium_low_priority_tickets):
+                custom_list = [ticket.id for ticket in recent_medium_low_priority_tickets]
+                queryset_medium_low = Ticket.objects.filter(pk__in=custom_list)
+
+            queryset_low = Ticket.objects.none()
+            if len(recent_low_priority_ticket):
+                custom_list = [ticket.id for ticket in recent_low_priority_ticket]
+                queryset_low = Ticket.objects.filter(pk__in=custom_list)
+
+            new_queryset = queryset_high_high.union(queryset_high_low,
+                                                    queryset_medium_high,
+                                                    queryset_medium_low,
+                                                    queryset_low)
 
         context = {
-            "ticket_list": queryset,
+            "ticket_list": new_queryset,
             "service_active": True
         }
 
@@ -61,7 +121,7 @@ class ServicesStatusView(View):
         context['status_list'] = status_list
 
         # Getting today's date
-        today = timezone.now()
+        today = timezone.now().date()
         list_of_five_days = [today]
 
         counter = 1
@@ -89,7 +149,7 @@ class ServicesStatusView(View):
                 for e in queryset:
                     client_domain_services = e.client_domains.all().exclude(services__name=None). \
                         values('services__name')
-                    services_list = client_domain_services.all().exclude(services__name=None).\
+                    services_list = client_domain_services.all().exclude(services__name=None). \
                         values_list('services__name', flat=True)
                     services = list(set(chain(services, services_list)))
                 services.sort()
@@ -135,39 +195,80 @@ class ServicesStatusView(View):
                     tickets_list = tickets_list | queryset
 
             status_per_day = list()
-            for day in list_of_five_days:
-                active_tickets_per_day = tickets_list.filter(begin__lte=day).exclude(end__lte=day)
 
+            i = 0
+            for day in list_of_five_days:
+                open_tickets = tickets_list.filter(Q(begin__lte=(day + timedelta(days=1))) & Q(end__isnull=True))
+                current_tickets = tickets_list.filter(begin__startswith=day)
+
+                active_tickets_per_day = open_tickets.union(current_tickets).order_by('begin')
+
+                status_per_day.append(i)
+                status_per_day[i] = list()
+
+                # if active_tickets_per_day:
                 if active_tickets_per_day:
 
                     # Separating tickets in groups by priority
-                    priority_tickets = list()
-                    medium_priority_tickets = list()
-                    low_priority = list()
+                    # recent_high_high_priority_tickets = list()
+                    # recent_high_low_priority_tickets = list()
+                    # recent_medium_high_priority_tickets = list()
+                    # recent_medium_low_priority_tickets = list()
 
+                    # for ticket in active_tickets_per_day:
                     for ticket in active_tickets_per_day:
 
-                        status = ticket.status.tag
-                        if status in ("In Process", "Alert", "Outage"):
-                            priority_tickets.append(ticket)
-                        elif status == "Planned":
-                            medium_priority_tickets.append(ticket)
-                        else:
-                            low_priority.append(ticket)
+                        # Grouping tickets in lists by priority
+                        # status = ticket.status.tag
 
-                    if priority_tickets:
-                        status_per_day.append(priority_tickets[0].status)
-                    elif medium_priority_tickets:
-                        status_per_day.append(medium_priority_tickets[0].status)
-                    elif low_priority:
-                        status_per_day.append(low_priority[0].status)
-                    else:
-                        status_per_day.append(no_issues)
+                        # if status == "Outage":
+                        #     recent_high_high_priority_tickets.append(ticket)
+                        # elif status == "Alert":
+                        #     recent_high_low_priority_tickets.append(ticket)
+                        # elif status == "In Process":
+                        #     recent_medium_high_priority_tickets.append(ticket)
+                        # elif status == "Planned":
+                        #     recent_medium_low_priority_tickets.append(ticket)
+
+                        status_per_day[i].append({
+                            ticket.id:
+                                ticket.status})
+
+                    # Attaching tickets in a list of dictionaries by priority
+                    # for iticket in recent_high_high_priority_tickets:
+                    #     status_per_day[i].append({
+                    #         iticket.id:
+                    #             iticket.status})
+                    #
+                    # for iticket in recent_high_low_priority_tickets:
+                    #     status_per_day[i].append({
+                    #         iticket.id:
+                    #             iticket.status})
+                    #
+                    # for iticket in recent_medium_high_priority_tickets:
+                    #     status_per_day[i].append({
+                    #         iticket.id:
+                    #             iticket.status})
+                    #
+                    # for iticket in recent_medium_low_priority_tickets:
+                    #     status_per_day[i].append({
+                    #         iticket.id:
+                    #             iticket.status})
+                    #
+                    # if not recent_high_high_priority_tickets and not recent_high_low_priority_tickets and \
+                    #         not recent_medium_high_priority_tickets and not recent_medium_low_priority_tickets:
+                    #     status_per_day.append({'None': no_issues})
+
+                    if not status_per_day[i]:
+                        status_per_day[i].append({'None': no_issues})
 
                 else:
-                    status_per_day.append(no_issues)
+                    status_per_day[i].append({'None': no_issues})
+
+                i = i + 1
 
             status_per_day.reverse()
+
             service_status[service] = status_per_day
 
         context['status'] = service_status
@@ -442,7 +543,7 @@ class ServiceHistoryView(View):
 
             # for every subservice:
             for subservice in subservices:
-                queryset = Ticket.objects.filter(sub_service=subservice)
+                queryset = Ticket.objects.filter(sub_service=subservice).order_by('-pk')
                 if queryset:
                     tickets_list = tickets_list | queryset
 
@@ -452,9 +553,6 @@ class ServiceHistoryView(View):
 
                 if search_value is not '':
                     for ticket in tickets_list:
-                        # if (search_value.lower() in ticket.ticket_id.lower()
-                        # or search_value.lower() in ticket.action_description.lower()
-                        # or search_value.lower() in ticket.status.tag.lower()):
                         if (search_value.lower() in (ticket.ticket_id.lower(),
                                                      ticket.action_description.lower(),
                                                      ticket.status.tag.lower())):

@@ -178,6 +178,16 @@ class SubscribersAdmin(admin.ModelAdmin):
     """
 
     list_display = ('name', 'email')
+
+    list_filter = (('services__clientdomain__region__name',
+                    DropdownFilter),
+                   ('services__clientdomain__name',
+                    DropdownFilter),
+                   ('services__name',
+                    DropdownFilter),
+                   ('subservices__name',
+                    DropdownFilter)
+                   )
     search_fields = ['name', 'email']
     ordering = ['name']
 
