@@ -16,9 +16,24 @@ let toggleDarkMode = () => {
 let cssToggle = () => {
     var slider = document.getElementById("dmslider");
     var html = document.getElementById("mainBody");
-    //var footer = document.getElementById("footer");
+    var list = document.getElementsByTagName("i");
+    var footer = document.getElementById("footer");
+    var brand = document.getElementById("navBarLogo");
+    var events = document.getElementsByClassName("ticket-instance");
+
+    for (let i = 0; i < list.length; i++){
+        list[i].classList.toggle("darkmode");
+    }
+
+    for (let i = 0; i < events.length; i++){
+        events[i].classList.toggle("list_events");
+        events[i].classList.toggle("eventDarkMode");
+    }
     html.classList.toggle("darkmode");
-    //footer.classList.toggle("retainInvert");
+    footer.classList.toggle("darkmode");
+    brand.classList.toggle("darkmode");
+    brand.classList.toggle("brighten");
+
 
 
 }

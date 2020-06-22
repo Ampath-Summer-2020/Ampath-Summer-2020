@@ -1,4 +1,5 @@
 
+
 html, body {
     font-family: 'Roboto', sans-serif;
 
@@ -8,8 +9,8 @@ html, body {
     filter:invert(100);
 }
 
-.retainInvert{
-    filter:invert(100);
+.brighten{
+    filter:contrast(10);
 }
 
 .blackbg {
@@ -23,6 +24,12 @@ html, body {
 #logo {
     width: auto;
     height: 2.5rem;
+}
+
+.eventDarkMode {
+    filter:invert(100);
+    background-color: #333333;
+    color: white;
 }
 
 .link {
@@ -66,7 +73,7 @@ h1 {
     font-size: 1.5rem;
 }
 
-#list_events {
+.list_events {
     background-color: #E9ECEF;
 }
 
@@ -213,8 +220,17 @@ a:hover {
 /* Default size for xs screen sizes */
 .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
 #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+<<<<<<< HEAD
     font-size: 0.8rem;
+=======
+    font-size: 0.9rem;
+>>>>>>> origin/font-darkmode-nav
 }
+
+h1 {
+        font-size: 1.5rem;
+}
+
 
 h3 {
     font-size: 1rem;
@@ -230,12 +246,17 @@ h3 {
 
 /* Adjusting elements according to screen size. Responsive */
 
+<<<<<<< HEAD
 @media (max-width: 400px) {
+=======
+@media (max-width: 576px) {
+>>>>>>> origin/font-darkmode-nav
 
    /*Small*/
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+<<<<<<< HEAD
         font-size: 0.8rem;
     }
 
@@ -245,12 +266,26 @@ h3 {
 
     h3 {
         font-size: 1.2rem;
+=======
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    h3 {
+        font-size: 1.1rem;
+>>>>>>> origin/font-darkmode-nav
     }
 
     #subscribe, #update {
         height: 35rem;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/font-darkmode-nav
 }
 
 
@@ -259,11 +294,15 @@ h3 {
     /*Small*/
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+<<<<<<< HEAD
         font-size: 0.8rem;
+=======
+        font-size: 0.9rem;
+>>>>>>> origin/font-darkmode-nav
     }
 
     h1 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
 
     h3 {
@@ -282,7 +321,11 @@ h3 {
     /*Medium*/
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+<<<<<<< HEAD
         font-size: 0.8rem;
+=======
+        font-size: 1rem;
+>>>>>>> origin/font-darkmode-nav
     }
 
     h1 {
@@ -290,7 +333,7 @@ h3 {
     }
 
     h3 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 
     #subscribe, #update {
@@ -302,11 +345,19 @@ h3 {
     /*Large*/
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+<<<<<<< HEAD
         font-size: 0.9rem;
+=======
+        font-size: 1.1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+>>>>>>> origin/font-darkmode-nav
     }
 
     h3 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
 
     #subscribe, #update {
@@ -323,11 +374,19 @@ h3 {
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
+<<<<<<< HEAD
         font-size: 0.9rem;
+=======
+        font-size: 1.15rem;
+>>>>>>> origin/font-darkmode-nav
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 2.1rem;
+    }
+
+    h3 {
+        font-size: 1.45rem;
     }
 
     #subscribe, #update {
@@ -357,7 +416,12 @@ h3 {
 
 .switch {
   position: relative;
+<<<<<<< HEAD
   margin-top: 5px;
+=======
+  margin-top: 2px;
+  margin-left: 5px;
+>>>>>>> origin/font-darkmode-nav
   display: inline-block;
   width: 40px;
   height: 24px;
