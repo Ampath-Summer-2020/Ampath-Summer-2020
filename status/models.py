@@ -277,7 +277,7 @@ class Ticket(models.Model):
     service = models.ForeignKey(Service, models.SET_NULL,
                                     blank=True, null=True, verbose_name='Service')
     client_domain = models.ForeignKey(ClientDomain, models.SET_NULL, 
-                                    blank=True, null=True, verbose_name='Client Service')
+                                    blank=True, null=True, verbose_name='Client Domain')
     status = models.ForeignKey(Status, models.DO_NOTHING,
                                     null=True, default=3, verbose_name='Status') 
     begin = models.DateTimeField()
@@ -297,6 +297,7 @@ class Ticket(models.Model):
     def __str__(self):
         # return "{0} in {1}".format(self.service_category, self.business_service)
         return self.ticket_id
+
 
 class TicketLog(models.Model):
     """

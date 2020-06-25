@@ -319,6 +319,20 @@ class TicketForm(forms.ModelForm):
                     self.instance.user_notified = True
                 except Exception as e:
                     print(e)  # we should log this as an error
+            
+            if self.cleaned_data['sub_service'] and not (self.cleaned_data['service'] or self.cleaned_data['client_domain']):
+                print('sub_service')
+            elif self.cleaned_data['service'] and not (self.cleaned_data['sub_service'] or self.cleaned_data['client_domain']):
+                print('service')
+            elif self.cleaned_data['client_domain'] and not (self.cleaned_data['sub_service'] or self.cleaned_data['service']):
+                print('client domain')
+            else:
+                print('more than 1')
+            # print('$$$$$$$$$$')
+            # print(self.cleaned_data['ticket_id'])
+            # print(self.cleaned_data['sub_service'])
+            # print(self.cleaned_data['service'])
+            # print(self.cleaned_data['client_domain'])
 
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):
