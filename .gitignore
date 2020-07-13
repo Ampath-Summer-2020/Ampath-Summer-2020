@@ -3,14 +3,12 @@ venv
 venv/
 venv/*
 
-env/
-.vscode/
-
 ServiceStatus/static
 ServiceStatus/static/
 ServiceStatus/static/*
 
 ServiceStatus/settings.py
+status/tests_settings.py
 
 .DS_Store
 
@@ -29,9 +27,13 @@ htmlcov
 htmlcov/
 htmlcov/*
 
+sent_emails/*.log
+
 .coverage
 .coverage.*
 coverage.xml
 *.cover
 .coveragerc
 
+env/
+.vscode/

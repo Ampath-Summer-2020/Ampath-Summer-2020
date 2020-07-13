@@ -18,9 +18,18 @@ class Service(models.Model):
         - The Service name will be mandatory, but no the description field.
         - The name field could have a maximum of 100 characters.
         - The description field will store an HTML enriched text content.
+        - The scope field will identify if service is inter-domain or multi-domain
     """
+    MULTI_DOMAIN = "multi_domain"
+    INTER_DOMAIN = "inter_domain"
+    DOMAIN_CHOICES = (
+        (MULTI_DOMAIN, "Multi-Domain"),
+        (INTER_DOMAIN, "Inter-Domain")  
+    )
+
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
     service_description = RichTextField(blank=True, null=True, verbose_name='Description')
+    scope = models.CharField(max_length=30, choices=DOMAIN_CHOICES, default=MULTI_DOMAIN, blank=False)
 
     def description(self):
         """
@@ -29,7 +38,7 @@ class Service(models.Model):
             description during the object listing process.
             - The HTML render process will help to visualize
             HTML rendered content on the listed object's stories.
-        :return: No return
+        :return: a truncated value formatted to HTML
         """
         if self.service_description is not None:
             return format_html(Truncator(self.service_description).chars(250))
@@ -44,6 +53,9 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def scope_type(self):
+        return str(self.scope).upper()
 
 
 class ClientDomain(models.Model):
@@ -227,6 +239,15 @@ class Status(models.Model):
         return self.tag
 
 
+def get_new_ticket_id():
+    # this method returns the 'id' of the last ticket object added to the DB and increments it by 1
+    # if 8 ticket objects are in the database it will return T000000009
+    latest_tickets_id_plus1 = 'T000000001'
+    if Ticket.objects.values().count() > 0:
+        latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
+    return latest_tickets_id_plus1
+
+
 class Ticket(models.Model):
     """
     Class to specify the Ticket Model/Table
@@ -248,7 +269,7 @@ class Ticket(models.Model):
         (YES, 'Yes')
     )
 
-    ticket_id = models.CharField(unique=True, max_length=10)
+    ticket_id = models.CharField(unique=True, max_length=10, default=get_new_ticket_id)
 
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.

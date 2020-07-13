@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter
+from django_admin_listfilter_dropdown.filters import ChoiceDropdownFilter, DropdownFilter, RelatedDropdownFilter
 
-from status.forms import TicketHistoryInlineFormset, TicketForm, SubscriberForm
+from status.forms import TicketHistoryInlineFormset, TicketForm, SubscriberForm, ClientDomainForm
 from .models import ClientDomain
 from .models import EmailDomain
 from .models import Priority
@@ -32,6 +32,7 @@ class RegionAdmin(admin.ModelAdmin):
 
 @admin.register(ClientDomain)
 class ClientDomainAdmin(admin.ModelAdmin):
+    form = ClientDomainForm
     list_display = ('name', 'description',)
     search_fields = ['name', 'domain_description']
     list_filter = (('services__topology__subservices__ticket__status__tag',
@@ -41,13 +42,15 @@ class ClientDomainAdmin(admin.ModelAdmin):
                    ('services__name',
                     DropdownFilter),
                    ('services__topology__subservices__name',
+                    DropdownFilter),
+                   ('services__scope',
                     DropdownFilter))
     ordering = ['name']
 
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description',)
+    list_display = ('name', 'description', 'scope')
     search_fields = ['name', 'service_description', 'topology__subservices__name',
                      'clientdomain__region__name']
     list_filter = (('topology__subservices__ticket__status__tag',
@@ -57,7 +60,9 @@ class ServiceAdmin(admin.ModelAdmin):
                    ('clientdomain__name',
                     DropdownFilter),
                    ('topology__subservices__name',
-                    DropdownFilter))
+                    DropdownFilter),
+                   ('scope',
+                    ChoiceDropdownFilter))
     ordering = ['name']
 
 
@@ -117,9 +122,11 @@ class TicketAdmin(admin.ModelAdmin):
 
     inlines = [TicketHistoryInline]
 
-    # readonly_fields = ['notify_action']
+    # ticket id will be auto generated when landing on Add Ticket
+    readonly_fields = ['ticket_id']
 
-    search_fields = ['ticket_id', 'sub_service__name', 'status__tag']
+    search_fields = ['sub_service__name', 'status__tag']  # removed ticket_id 6/29
+
     list_filter = (('status',
                     RelatedDropdownFilter),
                    ('sub_service__topology__service__clientdomain__region__name',
@@ -137,10 +144,12 @@ class TicketAdmin(admin.ModelAdmin):
     form = TicketForm
 
     def save_formset(self, request, form, formset, change):
+
         # If it is received data related to the ticket's events, the ticket
         # will update its status with the last status registered on the events
         if formset.cleaned_data:
             status = formset.cleaned_data[-1]['status']
+
             # If the last Ticket Log status is 'No Issues,' means that the problem has
             # updating the Ticket End Time to the value specified on the last Ticket Events
             if status.tag == 'No Issues':
