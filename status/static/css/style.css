@@ -66,6 +66,11 @@ html, body {
     position: relative;
 }
 
+#region_select_buttons {
+    margin: 1rem 0 0 0;
+    width: 100%
+}
+
 h1 {
     text-align: center;
     font-family: 'Fira Sans', sans-serif;
@@ -104,12 +109,11 @@ a:hover {
 }
 
 #list_of_services_data {
-    overflow: auto;
-    height: 33rem;
+    overflow: hidden;
 }
 
 #specific_service {
-    overflow: auto;
+    overflow: hidden;
     height: 17rem;
 }
 
@@ -193,7 +197,7 @@ a:hover {
 }
 
 #subscribe, #update {
-    height: 36rem;
+    height: 37rem;
 }
 
 #subscribe {
@@ -219,21 +223,17 @@ a:hover {
 
 /* Default size for xs screen sizes */
 .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
-#user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
-<<<<<<< HEAD
-    font-size: 0.8rem;
-=======
-    font-size: 0.9rem;
->>>>>>> origin/font-darkmode-nav
+#user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
+    font-size: 0.75rem;
 }
 
 h1 {
-        font-size: 1.5rem;
+        font-size: 1rem;
 }
 
 
 h3 {
-    font-size: 1rem;
+    font-size: 0.875rem;
 }
 
 #modify_subscription {
@@ -244,96 +244,81 @@ h3 {
     height: 88vh;
 }
 
+#region_selector {
+    width: 40%;
+    text-align: right;
+    margin: 5px;
+}
+
 /* Adjusting elements according to screen size. Responsive */
 
-<<<<<<< HEAD
-@media (max-width: 400px) {
-=======
 @media (max-width: 576px) {
->>>>>>> origin/font-darkmode-nav
 
-   /*Small*/
+    /*Small*/
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
-    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
-<<<<<<< HEAD
-        font-size: 0.8rem;
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
+        font-size: 0.75rem;
     }
 
     h1 {
-        font-size: 1.8rem;
-    }
-
-    h3 {
         font-size: 1.2rem;
-=======
-        font-size: 0.9rem;
-    }
-
-    h1 {
-        font-size: 1.6rem;
     }
 
     h3 {
-        font-size: 1.1rem;
->>>>>>> origin/font-darkmode-nav
+        font-size: 1rem;
     }
 
     #subscribe, #update {
-        height: 35rem;
+        height: 37rem;
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/font-darkmode-nav
+
 }
-
 
 @media (min-width: 576px) {
 
     /*Small*/
+
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
-    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
-<<<<<<< HEAD
-        font-size: 0.8rem;
-=======
-        font-size: 0.9rem;
->>>>>>> origin/font-darkmode-nav
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
+        font-size: 0.75rem;
     }
 
     h1 {
-        font-size: 1.6rem;
+            font-size: 1.2rem;
     }
 
     h3 {
-        font-size: 1.2rem;
+        font-size: 15rem;
     }
 
     #subscribe, #update {
-        height: 35rem;
+        height: 34rem;
+    }
+
+    #region_selector {
+    width: 30%;
+    text-align: right;
+    margin: 5px;
     }
 }
 
 @media (min-width: 768px) {
 
-
-
     /*Medium*/
+
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
-    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
-<<<<<<< HEAD
-        font-size: 0.8rem;
-=======
-        font-size: 1rem;
->>>>>>> origin/font-darkmode-nav
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
+        font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 2.8rem;
+        font-size: 1.5rem;
     }
 
     h3 {
-        font-size: 1.3rem;
+        font-size: 1.2rem
     }
 
     #subscribe, #update {
@@ -342,59 +327,66 @@ h3 {
 }
 
 @media (min-width: 992px) {
+
     /*Large*/
+
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
-    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
-<<<<<<< HEAD
-        font-size: 0.9rem;
-=======
-        font-size: 1.1rem;
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
+        font-size: 0.875rem;
     }
 
     h1 {
         font-size: 2rem;
->>>>>>> origin/font-darkmode-nav
     }
 
     h3 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
     }
 
     #subscribe, #update {
-        height: 36rem;
+        height: 35rem;
     }
 
     #subscription_page {
         height: 90vh;
     }
+
+    #region_selector {
+        width: 18%;
+        text-align: right;
+        margin: 5px;
+    }
 }
 
 @media (min-width: 1200px) {
+
     /*Extra Large*/
 
     .navbar-light .navbar-nav .nav-link, .btn, .dropdown-item, p, .form-control, #subscribe,
-    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
-<<<<<<< HEAD
-        font-size: 0.9rem;
-=======
-        font-size: 1.15rem;
->>>>>>> origin/font-darkmode-nav
+    #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add, label {
+        font-size: 0.875rem;
     }
 
     h1 {
-        font-size: 2.1rem;
+        font-size: 2rem;
     }
 
     h3 {
-        font-size: 1.45rem;
+        font-size: 1.5rem;
     }
 
     #subscribe, #update {
-        height: 36rem;
+        height: 35rem;
+    }
+
+    #region_selector {
+        text-align: right;
+        margin: 5px;
     }
 }
 
 @media (min-width: 1400px) {
+
     /*Extra Large*/
 
     #incidents_data {
@@ -410,18 +402,20 @@ h3 {
     #user_subservices, #user_services, #user_services_to_add, #user_subservices_to_add {
         height: 10rem;
     }
+
+    #region_selector {
+        text-align: right;
+        margin: 5px;
+    }
+
 }
 
-/* CSS Slider */
+/* CSS Dark Mode Slider */
 
 .switch {
   position: relative;
-<<<<<<< HEAD
-  margin-top: 5px;
-=======
-  margin-top: 2px;
+  margin-top: 0;
   margin-left: 5px;
->>>>>>> origin/font-darkmode-nav
   display: inline-block;
   width: 40px;
   height: 24px;
@@ -479,3 +473,61 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+
+/* Custom buttons for region selection */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 17px;
+    margin-right: 0;
+    vertical-align: text-top;
+}
+    /* Hide default HTML checkbox */
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 13px;
+        width: 13px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+/*input:checked + .slider {
+    background-color: #0AC739;
+}*/
+/*input:focus + .slider {
+    box-shadow: 0 0 1px #0AC739;
+}*/
+input:checked + .slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+/* Rounded sliders */
+.slider.round {
+    border-radius: 17px;
+}
+    .slider.round:before {
+        border-radius: 50%;
+    }

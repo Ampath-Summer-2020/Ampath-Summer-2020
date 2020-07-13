@@ -7,6 +7,7 @@ from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from validate_email import validate_email
 
 from status.mail_sender import MailSender
+from .models import ClientDomain
 from .models import EmailDomain
 from .models import Region
 from .models import Service
@@ -47,6 +48,39 @@ class ClientDomainForm(forms.ModelForm):
                     self.add_error("services", "{} is an inter-domain service and has  \
                                 already been taken.".format(service))
                     raise ValidationError("There are some errors in services")
+
+
+class ClientDomainForm(forms.ModelForm):
+
+    def clean(self):
+
+        # check to see if user has chosen a service
+        if 'services' in self.cleaned_data:
+            services = self.cleaned_data['services']
+        
+            tmp_inter_services = []  # list to hold inter-domain services chosen by user
+
+            for service in services:
+                if service.scope == Service.INTER_DOMAIN:
+                    # tmp_inter_services.append(service.name)
+                    
+                    """
+                    if user chose more than 1 inter-domain service
+                    currently the feature is not needed, but will be
+                    left here commented out if that feature is needed
+                    in the future
+                    """
+                    # if len(tmp_inter_services) > 1:  
+                    #     self.add_error("services", "Only 1 inter-domain service can be chosen. \
+                    #             Please choose between " + " and ".join(tmp_inter_services))
+                    #     raise ValidationError("There are some errors in services")
+
+                    # check if it is already taken by another client domain
+                    if ClientDomain.objects.filter(services__in=[service]) \
+                            .exclude(name=self.instance).exists():
+                        self.add_error("services", "{} is an inter-domain service and has  \
+                                    already been taken.".format(service))
+                        raise ValidationError("There are some errors in services")
 
 
 class EmailActions:
@@ -171,7 +205,6 @@ class EmailActions:
         topology = Topology.objects.filter(subservices__in=subservices)
 
         _changed_data = changed_data
-        # print(self.cleaned_data)
 
         users_mail1 = list()
         users_mail2 = list()
@@ -261,6 +294,7 @@ class TicketForm(forms.ModelForm):
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
+
         super(TicketForm, self).__init__(*args, **kwargs)
 
         if self.instance.id:

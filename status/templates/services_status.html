@@ -11,7 +11,7 @@
     <!--  Recent events section  -->
     <section id="recent_events"> <!--  This section will show all events in the last five days  -->
         <div class="container" id="events_heading">
-            <p class="bold">Recent Events</p>
+            <h3 class="bold">Recent Events</h3>
         </div>
 
         {#Describe this "for" statement functionality#}
@@ -37,7 +37,7 @@
     <!--  Search and filter section  -->
     <div class="container" id="search_and_filter">
         <div class="row mt-4">
-            <div class="col-3" id="search">
+            <div class="col-4" id="search">
                 <form action="." method="get">
                     <div class="row">
                         <div class="col-10 p-0">
@@ -57,42 +57,39 @@
                         </div>
                     </div>
                 </form>
-            </div>
-            <div class="col-5 pl-1">
-                <!--  Regions Dropdown  -->
-                <div class="dropdown">
-                    <button class="btn dropdown-toggle p-0 pt-2" type="button" id="regions_dropdown_menu"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        List services by regions
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="regions_dropdown_menu">
-                        <!--  This section will list regions from the database  -->
-                        <form action="." method="get">
-
-                            {#Describe this "for" statement functionality#}
-                            {% for region in region_list %}
-
-                                <div class="dropdown-item">
-                                    <input class="form-check-input" type="checkbox" name="regions" value="{{ region }}"
-                                           {% if region.name in regions_checked %}checked{% endif %}>
-                                    <label class="form-check-label">{{ region }}</label>
-                                </div>
-
-                            {% endfor %}
-
-                            <button type="submit" name="regions_select" class="btn btn-dark py-0">Select Regions
-                            </button>
-                        </form>
-                        <!--  End of list of regions from DB  -->
-                    </div>
+            	                </div>
+                <div class="col-6 d-flex align-items-center">
+                    <a href="/" class="link">
+                        <p class="m-0">Reset filters</p>
+                    </a>
                 </div>
-                <!--  End of Regions Dropdown  -->
-            </div>
-            <div class="col-4 border-left d-flex align-items-center">
-                <a href="/" class="link">
-                    <p class="m-0">Reset filters</p>
-                </a>
-            </div>
+                <!-- Region Select Buttons -->
+                <div id="region_select_buttons">
+                    <form action="." method="get">
+
+                        <!-- This loop prints each region from the database as a label, then creates a (custom)checkbox for each printed region.-->
+                        {#Describe this "for" statement functionality#}
+                        {% for region in region_list %}
+                        <span style="display: inline-block" id="region_selector">
+                            <label>{{ region }}</label>
+                            <label class="switch">
+                                <input type="checkbox" name="regions" value="{{ region }}"
+                                {% if region.name in regions_checked %}checked{% endif %}>
+                                <span class="slider round"></span>
+                            </label>
+                        </span>
+                        <!-- Potential cosmetic issues with text wrapping if the regions list grows larger. -->
+                        {% endfor %}
+                        <br/>
+                        <div  class="d-flex justify-content-center">
+                            <button type="submit" name="regions_select" class="btn btn btn-secondary mt-1 mb-2 d-flex justify-content-center" id="submit_region">
+                            Select Regions
+                        </button>
+                        </div>
+
+                    </form>
+                </div>
+                <!-- End Region Select Buttons -->
         </div>
     </div>
     <!--  End of Search and filter section  -->
@@ -132,7 +129,7 @@
             <div class="col-12 col-lg-10 mb-2 border">
                 <!-- Table headings -->
                 <div class="row border-top border-bottom bold pt-2 mb-2" id="list_of_services_heading">
-                    <div class="col-5">
+                    <div class="col-4">
                         <p>Business Services</p>
                     </div>
                     <div class="col pl-1">
@@ -175,7 +172,7 @@
                         {% for service in services_list %}
 
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-4">
                                     <a href="{{ service.id }}">
                                         <p>{{ service }}</p>
                                     </a>

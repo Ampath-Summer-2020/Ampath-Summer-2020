@@ -25,28 +25,25 @@
 
 <body>
 <!-- NavBar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light py-0 navbar-right justify-content-between sticky-top">
-
+<nav class="navbar navbar-expand-lg navbar-light bg-light py-0 pb-1 navbar-right justify-content-between sticky-top">
     <a class="navbar-brand m" href="{% url 'services_status_view' %}" id="navBarLogo">
         <img src="{% static 'img/logo.png' %}" id="logo" alt="logo" >
     </a>
-
-<!--    <div class="d-flex justify-content-end" id="navbarNavAltMarkup">-->
         <button class="navbar-toggler" data-toggle="collapse" data-target="#collapse_target">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse justify-content-between mt-2" id="collapse_target">
+        <div class="collapse navbar-collapse justify-content-between mt-1" id="collapse_target">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link{% if service_active %} active {% endif %}"
+                <li class="nav-item border-left {% if service_active %} active {% endif %} px-2">
+                    <a class="nav-link"
                     href="{% url 'services_status_view' %}">Services Status </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if subscription_active %} active {% endif %}"
+                <li class="nav-item border-left  {% if subscription_active %} active {% endif %} px-2">
+                    <a class="nav-link"
                     href="{% url 'subscription_view' %}">Manage subscriptions</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item border-left px-2">
                     <!--Contact Dropdown-->
                     <button class="nav-link btn dropdown-toggle" type="button" id="dropdownMenu2"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -65,7 +62,8 @@
                     <!--End of Contact Dropdown-->
 
                 </li>
-                <li class="nav-item">
+
+                <li class="nav-item border-left px-2">
                     <span class="nav-link">
                             <a class="" href="#">Dark Mode</a>
                             <label class="switch">
@@ -74,7 +72,7 @@
                             </label>
                     </span>
                 </li>
-                <li class="nav-item d-flex">
+                <li class="nav-item border-left px-2">
                     <a class="nav-link" href="https://status.amlight.net/admin/login/">Admin Login</a>
                 </li>
             </ul>
@@ -84,7 +82,6 @@
 <!-- End of NavBar -->
 
 <!--The following section will vary for each view-->
-
 {% block content %}
 {% endblock %}
 

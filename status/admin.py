@@ -1,7 +1,5 @@
 from django.contrib import admin
-from django_admin_listfilter_dropdown.filters import ChoiceDropdownFilter ,DropdownFilter, RelatedDropdownFilter
-from django import forms
-from django.core.exceptions import ValidationError
+from django_admin_listfilter_dropdown.filters import ChoiceDropdownFilter, DropdownFilter, RelatedDropdownFilter
 
 from status.forms import TicketHistoryInlineFormset, TicketForm, SubscriberForm, ClientDomainForm
 from .models import ClientDomain
@@ -15,7 +13,6 @@ from .models import Subscriber
 from .models import Ticket
 from .models import TicketLog
 from .models import Topology
-from django.contrib import messages
 
 
 @admin.register(Region)
@@ -36,17 +33,8 @@ class RegionAdmin(admin.ModelAdmin):
 @admin.register(ClientDomain)
 class ClientDomainAdmin(admin.ModelAdmin):
     form = ClientDomainForm
-    list_display = ('name', 'description', 'get_services', 'get_inter_domain_service',)
-
-    
-    
-    def inter_domain_services(self, obj):
-        return obj.inter_domain_service
-
-    def tickets(self, obj):
-        return Ticket.objects.get(client_domain=obj).ticket_id
-
-    
+    list_display = ('name', 'description',)
+    search_fields = ['name', 'domain_description']
     list_filter = (('services__topology__subservices__ticket__status__tag',
                     DropdownFilter),
                    ('region__name',
@@ -55,13 +43,14 @@ class ClientDomainAdmin(admin.ModelAdmin):
                     DropdownFilter),
                    ('services__topology__subservices__name',
                     DropdownFilter),
-                    ('services__scope',
+                   ('services__scope',
                     DropdownFilter))
-    # ordering = ['name']
+    ordering = ['name']
+
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'scope_type',)
+    list_display = ('name', 'description', 'scope')
     search_fields = ['name', 'service_description', 'topology__subservices__name',
                      'clientdomain__region__name']
     list_filter = (('topology__subservices__ticket__status__tag',
@@ -72,9 +61,8 @@ class ServiceAdmin(admin.ModelAdmin):
                     DropdownFilter),
                    ('topology__subservices__name',
                     DropdownFilter),
-                    ('scope', 
+                   ('scope',
                     ChoiceDropdownFilter))
-                    
     ordering = ['name']
 
 
@@ -126,7 +114,7 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = ('ticket_id', 'sub_service', 'status', 'begin', 'end', 'notify_action',)
 
     fieldsets = [
-        ('Sub-Service on process', {'fields': ['ticket_id', 'sub_service', 'service', 'client_domain', 'status']}),
+        ('Sub-Service on process', {'fields': ['ticket_id', 'sub_service', 'status']}),
         ('Date information', {'fields': ['begin', 'end']}),
         ('Additional Information', {'fields': ['action_description', 'action_notes']}),
         (None, {'fields': ['notify_action']}),
@@ -134,9 +122,11 @@ class TicketAdmin(admin.ModelAdmin):
 
     inlines = [TicketHistoryInline]
 
-    # readonly_fields = ['notify_action']
+    # ticket id will be auto generated when landing on Add Ticket
+    readonly_fields = ['ticket_id']
 
-    search_fields = ['ticket_id', 'sub_service__name', 'status__tag']
+    search_fields = ['sub_service__name', 'status__tag']  # removed ticket_id 6/29
+
     list_filter = (('status',
                     RelatedDropdownFilter),
                    ('sub_service__topology__service__clientdomain__region__name',
@@ -154,10 +144,12 @@ class TicketAdmin(admin.ModelAdmin):
     form = TicketForm
 
     def save_formset(self, request, form, formset, change):
+
         # If it is received data related to the ticket's events, the ticket
         # will update its status with the last status registered on the events
         if formset.cleaned_data:
             status = formset.cleaned_data[-1]['status']
+
             # If the last Ticket Log status is 'No Issues,' means that the problem has
             # updating the Ticket End Time to the value specified on the last Ticket Events
             if status.tag == 'No Issues':

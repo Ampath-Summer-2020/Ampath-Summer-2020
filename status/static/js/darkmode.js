@@ -1,6 +1,3 @@
-
-
-
 let toggleDarkMode = () => {
 
     cssToggle();
@@ -33,14 +30,10 @@ let cssToggle = () => {
     footer.classList.toggle("darkmode");
     brand.classList.toggle("darkmode");
     brand.classList.toggle("brighten");
-
-
-
 }
 
 if (window.localStorage.getItem('darkmode') == "t") {
     cssToggle();
     var slide = document.getElementById("dmslider");
     slide.checked = true;
-
 }

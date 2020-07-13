@@ -20,16 +20,16 @@ class Service(models.Model):
         - The description field will store an HTML enriched text content.
         - The scope field will identify if service is inter-domain or multi-domain
     """
-
     MULTI_DOMAIN = "multi_domain"
     INTER_DOMAIN = "inter_domain"
-    DOMAIN_CHOICES = [
+    DOMAIN_CHOICES = (
         (MULTI_DOMAIN, "Multi-Domain"),
         (INTER_DOMAIN, "Inter-Domain")  
-    ]
+    )
+
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
     service_description = RichTextField(blank=True, null=True, verbose_name='Description')
-    scope = models.CharField(max_length=30, choices=DOMAIN_CHOICES, default=MULTI_DOMAIN, blank=True)
+    scope = models.CharField(max_length=30, choices=DOMAIN_CHOICES, default=MULTI_DOMAIN, blank=False)
 
     def description(self):
         """
@@ -38,7 +38,7 @@ class Service(models.Model):
             description during the object listing process.
             - The HTML render process will help to visualize
             HTML rendered content on the listed object's stories.
-        :return: No return
+        :return: a truncated value formatted to HTML
         """
         if self.service_description is not None:
             return format_html(Truncator(self.service_description).chars(250))
@@ -53,10 +53,11 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
-
+    
     def scope_type(self):
         return str(self.scope).upper()
-    
+
+
 class ClientDomain(models.Model):
     """
     Class to specify the Client Domain model.
@@ -72,7 +73,6 @@ class ClientDomain(models.Model):
     domain_description = RichTextField(blank=True, null=True, verbose_name='Description')
     services = models.ManyToManyField(Service)
 
-    
     def description(self):
         """
         Method to render HTML content.
@@ -95,15 +95,6 @@ class ClientDomain(models.Model):
     def __str__(self):
         return self.name
 
-    def get_services(self):
-        return "\n".join([s.name for s in self.services.all()])
-
-    def get_inter_domain_service(self):
-        inter_domain_services = []
-        for service in self.services.all():
-            if service.scope == 'inter_domain':
-                inter_domain_services.append(service.name)
-        return "\n".join(inter_domain_services)
 
 class Region(models.Model):
     """
@@ -142,6 +133,7 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+
 class SubService(models.Model):
     """
     Class to specify the Subservices Model/Table
@@ -175,6 +167,7 @@ class SubService(models.Model):
     def __str__(self):
         return self.name
 
+
 class Priority(models.Model):
     """
     Class to specify the Priority Model/Table
@@ -193,6 +186,7 @@ class Priority(models.Model):
 
     def __str__(self):
         return self.tag
+
 
 class Topology(models.Model):
     """
@@ -224,6 +218,7 @@ class Topology(models.Model):
         return "Topology {0}: about Service {1}, {2} " \
                "priority".format(self.pk, self.service, self.priority)
 
+
 class Status(models.Model):
     """
     Class to specify the Status Model/Table
@@ -243,6 +238,16 @@ class Status(models.Model):
     def __str__(self):
         return self.tag
 
+
+def get_new_ticket_id():
+    # this method returns the 'id' of the last ticket object added to the DB and increments it by 1
+    # if 8 ticket objects are in the database it will return T000000009
+    latest_tickets_id_plus1 = 'T000000001'
+    if Ticket.objects.values().count() > 0:
+        latest_tickets_id_plus1 = 'T' + str(Ticket.objects.values().latest('id')['id'] + 1).zfill(8)
+    return latest_tickets_id_plus1
+
+
 class Ticket(models.Model):
     """
     Class to specify the Ticket Model/Table
@@ -254,10 +259,6 @@ class Ticket(models.Model):
         - The actions (notes and description) fields will store an HTML enriched text content.
         - The relationship with SubServices will help to relate a
         ticket to a subservice.
-        - The relationship with Services will help to relate a ticket
-        to a service
-        - The relationship with ClientDomains will help to relate a ticket
-        to a clientdomain
         - The notification action field will control the notification process
     """
 
@@ -268,18 +269,14 @@ class Ticket(models.Model):
         (YES, 'Yes')
     )
 
-    ticket_id = models.CharField(unique=True, max_length=10)
+    ticket_id = models.CharField(unique=True, max_length=10, default=get_new_ticket_id)
 
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.
     sub_service = models.ForeignKey(SubService, models.SET_NULL,
-                                    blank=True, null=True, verbose_name='Sub-Service')
-    service = models.ForeignKey(Service, models.SET_NULL,
-                                    blank=True, null=True, verbose_name='Service')
-    client_domain = models.ForeignKey(ClientDomain, models.SET_NULL, 
-                                    blank=True, null=True, verbose_name='Client Domain')
+                                    null=True, verbose_name='Sub-Service')
     status = models.ForeignKey(Status, models.DO_NOTHING,
-                                    null=True, default=3, verbose_name='Status') 
+                               null=True, default=3, verbose_name='Status')
     begin = models.DateTimeField()
     end = models.DateTimeField(null=True, blank=True)
     action_description = RichTextField()
@@ -315,10 +312,8 @@ class TicketLog(models.Model):
     action_notes = RichTextField(blank=True, null=True, verbose_name='Notes')
 
     def __str__(self):
-        # if service is None
-        # is sub-service is None
-        # etc ...
         return "{0} in {1}".format(self.ticket.sub_service, self.ticket.ticket_id)
+
 
 class Subscriber(models.Model):
     """
@@ -341,6 +336,7 @@ class Subscriber(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class EmailDomain(models.Model):
     """
