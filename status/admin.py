@@ -114,6 +114,7 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = ('ticket_id', 'sub_service', 'status', 'begin', 'end', 'notify_action',)
 
     fieldsets = [
+        # ('Sub-Service on process', {'fields': ['ticket_id', 'client_domain', 'services', 'sub_services', 'status']}),
         ('Sub-Service on process', {'fields': ['ticket_id', 'sub_service', 'status']}),
         ('Date information', {'fields': ['begin', 'end']}),
         ('Additional Information', {'fields': ['action_description', 'action_notes']}),

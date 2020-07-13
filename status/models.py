@@ -271,6 +271,10 @@ class Ticket(models.Model):
 
     ticket_id = models.CharField(unique=True, max_length=10, default=get_new_ticket_id)
 
+    # sub-service to sub-services
+    # sub_services = models.ManyToManyField(SubService, blank=True, verbose_name='Sub-Services')
+
+
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.
     sub_service = models.ForeignKey(SubService, models.SET_NULL,
@@ -313,6 +317,8 @@ class TicketLog(models.Model):
 
     def __str__(self):
         return "{0} in {1}".format(self.ticket.sub_service, self.ticket.ticket_id)
+        # adjust ticket log for sub_services
+        # return "{0} in {1}".format(self.ticket.sub_services.all(), self.ticket.ticket_id)
 
 
 class Subscriber(models.Model):

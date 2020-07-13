@@ -2,8 +2,6 @@ import secrets
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db.models import ManyToManyRel
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from validate_email import validate_email
 
 from status.mail_sender import MailSender
@@ -15,39 +13,6 @@ from .models import SubService
 from .models import Subscriber
 from .models import Ticket
 from .models import Topology
-from .models import ClientDomain
-from django.forms import Select # for custom widget
-
-from itertools import chain
-
-class ClientDomainForm(forms.ModelForm):
-
-    def clean(self):
-        services = self.cleaned_data['services']
-        
-        tmp_inter_services = []  # list to hold inter-domain services chosen by user
-
-        for service in services:
-            if service.scope == Service.INTER_DOMAIN:
-                # tmp_inter_services.append(service.name)
-                
-                """
-                if user chose more than 1 inter-domain service
-                currently the feature is not needed, but will be
-                left here commented out if that feature is needed
-                in the future
-                """
-                # if len(tmp_inter_services) > 1:  
-                #     self.add_error("services", "Only 1 inter-domain service can be chosen. \
-                #             Please choose between " + " and ".join(tmp_inter_services))
-                #     raise ValidationError("There are some errors in services")
-
-                # check if it is already taken by another client domain
-                if ClientDomain.objects.filter(services__in=[service]) \
-                        .exclude(name=self.instance).exists():
-                    self.add_error("services", "{} is an inter-domain service and has  \
-                                already been taken.".format(service))
-                    raise ValidationError("There are some errors in services")
 
 
 class ClientDomainForm(forms.ModelForm):
@@ -289,6 +254,15 @@ class TicketForm(forms.ModelForm):
 
     cleaned_data = None
 
+    # client_domain = forms.ModelChoiceField(
+    #     queryset=ClientDomain.objects.all(),
+    #     required=False
+    # )
+
+    # services = forms.ModelMultipleChoiceField(
+    #     queryset=Service.objects.all(),
+    #     required=False)
+
     class Meta:
         model = Ticket
         fields = '__all__'
@@ -353,20 +327,44 @@ class TicketForm(forms.ModelForm):
                     self.instance.user_notified = True
                 except Exception as e:
                     print(e)  # we should log this as an error
-            
-            if self.cleaned_data['sub_service'] and not (self.cleaned_data['service'] or self.cleaned_data['client_domain']):
-                print('sub_service')
-            elif self.cleaned_data['service'] and not (self.cleaned_data['sub_service'] or self.cleaned_data['client_domain']):
-                print('service')
-            elif self.cleaned_data['client_domain'] and not (self.cleaned_data['sub_service'] or self.cleaned_data['service']):
-                print('client domain')
-            else:
-                print('more than 1')
-            # print('$$$$$$$$$$')
-            # print(self.cleaned_data['ticket_id'])
-            # print(self.cleaned_data['sub_service'])
-            # print(self.cleaned_data['service'])
-            # print(self.cleaned_data['client_domain'])
+
+            # if self.cleaned_data['client_domain']:
+            #     # all services under the domain are affected
+            #     # all sub-services under each service is also
+            #     # affected
+
+            #     # client domain chosen by user
+            #     client_domain = self.cleaned_data['client_domain']
+
+            #     # |= allows us to create a union of querysets
+            #     # This allows for us to add on to the services
+            #     # if the user already chooses a service or
+            #     # services.
+            #     self.cleaned_data['services'] |= client_domain.services.all()
+
+            # if self.cleaned_data['services']:
+            #     # associated_sub_services
+            #     services = self.cleaned_data['services']
+
+            #     querysets = []
+            #     for service in services:
+
+            #         # get sub service under service from Topology
+            #         if Topology.objects.filter(service=service).values('subservices').exists():
+            #             topology_queryset = Topology.objects.filter(
+            #                 service=service)
+            #             for topology in topology_queryset:
+            #                 querysets.append(topology.subservices.all())
+
+            #     result_queryset = SubService.objects.none()
+            #     for query in querysets:
+            #         result_queryset = result_queryset | query
+
+            #     # |= allows us to create a union of querysets
+            #     # This allows for us to add on to the subservices
+            #     # if the user already chooses a sub-service or
+            #     # sub-services.
+            #     self.cleaned_data['sub_services'] |= result_queryset
 
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):
