@@ -111,11 +111,15 @@ class TicketHistoryInline(admin.StackedInline):
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ('ticket_id', 'sub_service', 'status', 'begin', 'end', 'notify_action',)
+    list_display = ('ticket_id', 'get_sub_services', 'status', 'begin', 'end', 'notify_action',)
+
+    def get_sub_services(self, obj):
+        return "\n".join([sub_service.name for sub_service in obj.sub_services.all()])
+
+    get_sub_services.short_description = 'Sub-Services'    
 
     fieldsets = [
         ('Sub-Service on process', {'fields': ['ticket_id', 'client_domain', 'services', 'sub_services', 'status']}),
-        # ('Sub-Service on process', {'fields': ['ticket_id', 'sub_service', 'status']}),
         ('Date information', {'fields': ['begin', 'end']}),
         ('Additional Information', {'fields': ['action_description', 'action_notes']}),
         (None, {'fields': ['notify_action']}),
@@ -126,17 +130,17 @@ class TicketAdmin(admin.ModelAdmin):
     # ticket id will be auto generated when landing on Add Ticket
     readonly_fields = ['ticket_id']
 
-    search_fields = ['sub_service__name', 'status__tag']  # removed ticket_id 6/29
+    search_fields = ['sub_services__name', 'status__tag']  # removed ticket_id 6/29
 
     list_filter = (('status',
                     RelatedDropdownFilter),
-                   ('sub_service__topology__service__clientdomain__region__name',
+                   ('sub_services__topology__service__clientdomain__region__name',
                     DropdownFilter),
-                   ('sub_service__topology__service__clientdomain__name',
+                   ('sub_services__topology__service__clientdomain__name',
                     DropdownFilter),
-                   ('sub_service__topology__service__name',
+                   ('sub_services__topology__service__name',
                     DropdownFilter),
-                   ('sub_service',
+                   ('sub_services',
                     RelatedDropdownFilter))
     ordering = ['end']
 

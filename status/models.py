@@ -277,8 +277,9 @@ class Ticket(models.Model):
 
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.
-    sub_service = models.ForeignKey(SubService, models.SET_NULL,
-                                    null=True, verbose_name='Sub-Service')
+    # sub_service = models.ForeignKey(SubService, models.SET_NULL,
+    #                                 null=True, verbose_name='Sub-Service')
+
     status = models.ForeignKey(Status, models.DO_NOTHING,
                                null=True, default=3, verbose_name='Status')
     begin = models.DateTimeField()
