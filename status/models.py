@@ -24,7 +24,7 @@ class Service(models.Model):
     INTER_DOMAIN = "inter_domain"
     DOMAIN_CHOICES = (
         (MULTI_DOMAIN, "Multi-Domain"),
-        (INTER_DOMAIN, "Inter-Domain")  
+        (INTER_DOMAIN, "Inter-Domain")
     )
 
     name = models.CharField(unique=True, max_length=100, verbose_name='Service')
@@ -53,7 +53,7 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def scope_type(self):
         return str(self.scope).upper()
 
@@ -85,6 +85,7 @@ class ClientDomain(models.Model):
         if self.domain_description is not None:
             return format_html(self.domain_description)
         return self.domain_description
+
     description.allow_tags = True
 
     class Meta:
@@ -272,8 +273,7 @@ class Ticket(models.Model):
     ticket_id = models.CharField(unique=True, max_length=10, default=get_new_ticket_id)
 
     # sub-service to sub-services
-    # sub_services = models.ManyToManyField(SubService, blank=True, verbose_name='Sub-Services')
-
+    sub_services = models.ManyToManyField(SubService, blank=True, verbose_name='Sub-Services', related_name='SubService')
 
     # This action (models.SET_NULL) will allow keeping tickets regardless of
     # the deletion of the sub-service where they belong.

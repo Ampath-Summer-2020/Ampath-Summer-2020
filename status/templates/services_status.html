@@ -17,13 +17,25 @@
         {#Describe this "for" statement functionality#}
         {% for ticket in ticket_list %}
 
+
+
             <div class="container mt-4 py-3 ticket-instance list_events"
                  style="border-left: 0.6rem solid {{ ticket.status.color_hex }};">
                 <a href="details/{{ ticket.id }}">
-                    <p><span class="bold">Sub-service Impacted: </span>{{ ticket.sub_service.name }}</p>
+                    <p><span class="bold">Sub-services Impacted: </span>
+                        <ul>
+                            {% for sub_service in ticket.sub_services.all %}
+
+                            <li style="float: left;" class="mx-3"><p style="margin: 0;">{{sub_service.name}}</p></li>
+                    {% endfor %}
+                        </ul>
+                    <div class="clearfix"></div>
+
+                    </p>
                     <p><span class="bold">Status: </span>{{ ticket.status.tag }}</p>
                     <p>{{ ticket.action_description | safe }}</p> <!--  Description of the ticket  -->
                 </a>
+
             </div>
 
         {% endfor %}

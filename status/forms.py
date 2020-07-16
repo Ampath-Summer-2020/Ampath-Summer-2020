@@ -22,20 +22,20 @@ class ClientDomainForm(forms.ModelForm):
         # check to see if user has chosen a service
         if 'services' in self.cleaned_data:
             services = self.cleaned_data['services']
-        
+
             tmp_inter_services = []  # list to hold inter-domain services chosen by user
 
             for service in services:
                 if service.scope == Service.INTER_DOMAIN:
                     # tmp_inter_services.append(service.name)
-                    
+
                     """
                     if user chose more than 1 inter-domain service
                     currently the feature is not needed, but will be
                     left here commented out if that feature is needed
                     in the future
                     """
-                    # if len(tmp_inter_services) > 1:  
+                    # if len(tmp_inter_services) > 1:
                     #     self.add_error("services", "Only 1 inter-domain service can be chosen. \
                     #             Please choose between " + " and ".join(tmp_inter_services))
                     #     raise ValidationError("There are some errors in services")
@@ -254,14 +254,14 @@ class TicketForm(forms.ModelForm):
 
     cleaned_data = None
 
-    # client_domain = forms.ModelChoiceField(
-    #     queryset=ClientDomain.objects.all(),
-    #     required=False
-    # )
+    client_domain = forms.ModelChoiceField(
+        queryset=ClientDomain.objects.all(),
+        required=False
+    )
 
-    # services = forms.ModelMultipleChoiceField(
-    #     queryset=Service.objects.all(),
-    #     required=False)
+    services = forms.ModelMultipleChoiceField(
+        queryset=Service.objects.all(),
+        required=False)
 
     class Meta:
         model = Ticket
@@ -328,43 +328,43 @@ class TicketForm(forms.ModelForm):
                 except Exception as e:
                     print(e)  # we should log this as an error
 
-            # if self.cleaned_data['client_domain']:
-            #     # all services under the domain are affected
-            #     # all sub-services under each service is also
-            #     # affected
+            if self.cleaned_data['client_domain']:
+                # all services under the domain are affected
+                # all sub-services under each service is also
+                # affected
 
-            #     # client domain chosen by user
-            #     client_domain = self.cleaned_data['client_domain']
+                # client domain chosen by user
+                client_domain = self.cleaned_data['client_domain']
 
-            #     # |= allows us to create a union of querysets
-            #     # This allows for us to add on to the services
-            #     # if the user already chooses a service or
-            #     # services.
-            #     self.cleaned_data['services'] |= client_domain.services.all()
+                # |= allows us to create a union of querysets
+                # This allows for us to add on to the services
+                # if the user already chooses a service or
+                # services.
+                self.cleaned_data['services'] |= client_domain.services.all()
 
-            # if self.cleaned_data['services']:
-            #     # associated_sub_services
-            #     services = self.cleaned_data['services']
+            if self.cleaned_data['services']:
+                # associated_sub_services
+                services = self.cleaned_data['services']
 
-            #     querysets = []
-            #     for service in services:
+                querysets = []
+                for service in services:
 
-            #         # get sub service under service from Topology
-            #         if Topology.objects.filter(service=service).values('subservices').exists():
-            #             topology_queryset = Topology.objects.filter(
-            #                 service=service)
-            #             for topology in topology_queryset:
-            #                 querysets.append(topology.subservices.all())
+                    # get sub service under service from Topology
+                    if Topology.objects.filter(service=service).values('subservices').exists():
+                        topology_queryset = Topology.objects.filter(
+                            service=service)
+                        for topology in topology_queryset:
+                            querysets.append(topology.subservices.all())
 
-            #     result_queryset = SubService.objects.none()
-            #     for query in querysets:
-            #         result_queryset = result_queryset | query
+                result_queryset = SubService.objects.none()
+                for query in querysets:
+                    result_queryset = result_queryset | query
 
-            #     # |= allows us to create a union of querysets
-            #     # This allows for us to add on to the subservices
-            #     # if the user already chooses a sub-service or
-            #     # sub-services.
-            #     self.cleaned_data['sub_services'] |= result_queryset
+                # |= allows us to create a union of querysets
+                # This allows for us to add on to the subservices
+                # if the user already chooses a sub-service or
+                # sub-services.
+                self.cleaned_data['sub_services'] |= result_queryset
 
 
 class TicketHistoryInlineFormset(forms.models.BaseInlineFormSet):
