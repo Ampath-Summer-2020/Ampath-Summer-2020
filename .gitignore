@@ -34,3 +34,6 @@ sent_emails/*.log
 coverage.xml
 *.cover
 .coveragerc
+
+env/
+.vscode/
