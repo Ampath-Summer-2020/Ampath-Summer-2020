@@ -11,8 +11,20 @@
             <div class="col-1 p-0"></div>
             <div class="col-10">
 
+
                 <!--  Ticket main information section  -->
-                <p><span class="bold">Sub-service affected:</span> {{ object.sub_service }}</p>
+                <p style="display: inline;"><span class="bold">Sub-services affected:</span></p>
+
+                             <span class="">
+                                <ul>
+                                    {% for sub_service in object.sub_services.all %}
+                                     <li style="float: left;" class="mx-3" ><p style="display: inline;">{{sub_service.name}}</p></li>
+                                    {% endfor %}
+                                </ul>
+                             </span>
+
+
+
                 <div class="container mb-1 border-bottom py-2 mb-4"
                      style="border-left: 0.4rem solid {{ object.status.color_hex }};"
                      id="ticket_info">

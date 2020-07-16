@@ -96,7 +96,7 @@
                             <div class="col-2 col-lg-1">
                                 <a href="/details/{{ ticket.id }}">
                                     <p class="m-0 link" data-toggle="tooltip" data-placement="top"
-                                       title="Sub-service affected: {{ ticket.sub_service.name }}"
+                                       title="Sub-services affected: {% for sub_service in ticket.sub_services.all %}{{sub_service}}, {% endfor %}"
                                        id="ticket_id">
                                         {{ ticket.ticket_id }}
                                     </p>

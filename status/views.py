@@ -57,6 +57,7 @@ class ServicesStatusView(View):
         recent_tickets = Ticket.objects.none()
 
         new_queryset = None
+        subservice_queryset = None
 
         if queryset:
             recent_tickets_list = recent_tickets | queryset
@@ -110,6 +111,7 @@ class ServicesStatusView(View):
                                                     queryset_medium_high,
                                                     queryset_medium_low,
                                                     queryset_low)
+
 
         context = {
             "ticket_list": new_queryset,
@@ -179,7 +181,7 @@ class ServicesStatusView(View):
 
         # Declaring an empty dictionary to store status per day for each service
         service_status = dict()
-        no_issues = Status.objects.filter(tag='No Issues').first()
+        no_issues = Status.objects.filter(tag='No Issues')[0]
 
         # Getting list of tickets associated with each service
         for service in services:
