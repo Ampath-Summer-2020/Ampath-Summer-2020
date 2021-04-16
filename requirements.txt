@@ -4,7 +4,7 @@ Django==3.0.7
 django-admin-list-filter-dropdown==1.0.3
 django-ckeditor==5.9.0
 django-colorfield==0.3.1
-django-debug-toolbar==2.2
+django-debug-toolbar==2.2.1
 django-extensions==2.2.9
 django-js-asset==1.2.2
 django-smart-selects==1.5.6
